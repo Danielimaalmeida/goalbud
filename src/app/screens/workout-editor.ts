@@ -1,0 +1,215 @@
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+import { newId } from '../core/ids';
+import { APP_DEFAULT_REST_SECONDS, type Exercise, type ExerciseKind, type SetTarget, type Workout } from '../core/model';
+import { AppStore } from '../core/store';
+
+interface Draft {
+  exercise: Exercise;
+  sets: SetTarget[];
+}
+
+/** Workout template editor. Exercises are created inline the first time a name is typed. */
+@Component({
+  selector: 'app-workout-editor',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="screen">
+      <header class="form-head">
+        <button class="ghost" (click)="cancel()">Cancel</button>
+        <div class="title">{{ existing() ? 'Edit workout' : 'New workout' }}</div>
+        <button class="btn" [disabled]="!name().trim() || busy()" (click)="save()">Save</button>
+      </header>
+
+      <div class="body">
+        <section>
+          <div class="lbl">Name</div>
+          <label class="field"><input [value]="name()" (input)="name.set(v($event))" placeholder="Push day" autocomplete="off" /></label>
+        </section>
+
+        <section>
+          <div class="lbl">Rest between sets</div>
+          <div class="card pad stepper">
+            <button class="step" (click)="bumpRest(-15)" aria-label="Less">−</button>
+            <div class="sv"><b>{{ rest() ?? appRest }} s</b>{{ rest() === null ? ' · app default' : '' }}</div>
+            <button class="step" (click)="bumpRest(15)" aria-label="More">+</button>
+          </div>
+        </section>
+
+        <section>
+          <div class="lbl">Exercises</div>
+          <div class="exs">
+            @for (d of drafts(); track d.exercise.id; let i = $index) {
+              <div class="card ex">
+                <div class="ex-head">
+                  <div class="grow"><div class="ex-name">{{ d.exercise.name }}</div><div class="ex-kind">{{ d.exercise.kind === 'reps' ? 'Reps & weight' : 'Time' }}</div></div>
+                  <button class="rm" (click)="remove(i)" aria-label="Remove from workout">×</button>
+                </div>
+                <div class="sets">
+                  @for (s of d.sets; track $index; let j = $index) {
+                    <div class="set">
+                      <span class="idx">{{ j + 1 }}</span>
+                      @if (d.exercise.kind === 'reps') {
+                        <label class="num"><input type="number" inputmode="numeric" min="0" [value]="s.reps ?? ''" (change)="setVal(i, j, 'reps', $event)" placeholder="reps" /><span>reps</span></label>
+                        <span class="x">×</span>
+                        <label class="num"><input type="number" inputmode="decimal" min="0" step="0.5" [value]="s.weight ?? ''" (change)="setVal(i, j, 'weight', $event)" placeholder="—" /><span>kg</span></label>
+                      } @else {
+                        <label class="num"><input type="number" inputmode="numeric" min="0" [value]="s.seconds ?? ''" (change)="setVal(i, j, 'seconds', $event)" placeholder="60" /><span>s</span></label>
+                      }
+                      <button class="rm sm" (click)="removeSet(i, j)" [disabled]="d.sets.length === 1" aria-label="Remove set">×</button>
+                    </div>
+                  }
+                </div>
+                <button class="addset" (click)="addSet(i)">+ Add set</button>
+              </div>
+            }
+          </div>
+
+          <div class="card pad add">
+            <div class="addrow">
+              <input class="addin" list="ex-names" [value]="newName()" (input)="newName.set(v($event))" (keydown.enter)="add()" placeholder="Add an exercise…" autocomplete="off" />
+              <datalist id="ex-names">@for (e of suggestions(); track e.id) { <option [value]="e.name"></option> }</datalist>
+              <button class="btn is-sm" [disabled]="!newName().trim()" (click)="add()">Add</button>
+            </div>
+            @if (isNew()) {
+              <div class="tabs">
+                <button class="pill-tab" [class.is-on]="newKind() === 'reps'" (click)="newKind.set('reps')">Reps &amp; weight</button>
+                <button class="pill-tab" [class.is-on]="newKind() === 'time'" (click)="newKind.set('time')">Time</button>
+              </div>
+              <div class="hint">New exercise. It joins your library and can be reused.</div>
+            }
+          </div>
+        </section>
+
+        @if (existing(); as w) {
+          <button class="card arch" (click)="archive(w)"><span class="row-action is-quiet grow">Archive workout</span><span class="aside">past sessions are kept</span><span class="chev">›</span></button>
+        }
+      </div>
+    </div>
+  `,
+  styles: `
+    .body { flex: 1; padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 18px; }
+    .lbl { font: 800 11px/1 var(--font); color: var(--ink-4); letter-spacing: .09em; text-transform: uppercase; margin-bottom: 10px; }
+    .field { display: flex; }
+    .card.pad { padding: 14px; border-radius: 18px; }
+    .stepper { display: flex; align-items: center; gap: 12px; }
+    .step { width: 44px; height: 44px; border-radius: 14px; background: var(--fill); font: 800 20px/1 var(--font); color: var(--ink); display: flex; align-items: center; justify-content: center; flex: none; }
+    .sv { flex: 1; text-align: center; font: 600 14px/1 var(--font); color: var(--ink-3); }
+    .sv b { font: 900 20px/1 var(--font); color: var(--ink); }
+    .exs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+    .ex { padding: 14px; border-radius: 18px; }
+    .ex-head { display: flex; align-items: center; gap: 10px; }
+    .ex-name { font: 800 16px/1.2 var(--font); color: var(--ink); }
+    .ex-kind { font: 500 12px/1.3 var(--font); color: var(--ink-4); margin-top: 3px; }
+    .grow { flex: 1; min-width: 0; }
+    .rm { width: 32px; height: 32px; border-radius: 10px; background: var(--fill); color: var(--ink-4); font: 700 18px/1 var(--font); display: flex; align-items: center; justify-content: center; flex: none; }
+    .rm.sm { width: 28px; height: 28px; font-size: 15px; }
+    .rm:disabled { opacity: .3; }
+    .sets { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+    .set { display: flex; align-items: center; gap: 8px; }
+    .idx { width: 22px; font: 800 13px/1 var(--font); color: var(--ink-6); }
+    .num { flex: 1; display: flex; align-items: center; gap: 6px; background: var(--fill); border: 1.5px solid var(--line-strong); border-radius: 11px; padding: 8px 12px; }
+    .num input { width: 100%; border: 0; background: none; outline: 0; font: 800 15px/1 var(--font); color: var(--ink); }
+    .num span { font: 600 12px/1 var(--font); color: var(--ink-4); }
+    .x { font: 700 13px/1 var(--font); color: var(--ink-5); }
+    .addset { margin-top: 10px; font: 700 13px/1 var(--font); color: var(--sage); padding: 6px 2px; }
+    .add { display: flex; flex-direction: column; gap: 10px; }
+    .addrow { display: flex; gap: 8px; align-items: center; }
+    .addin { flex: 1; border: 0; outline: 0; background: var(--fill); border-radius: 12px; padding: 13px 14px; font: 700 15px/1 var(--font); color: var(--ink); }
+    .tabs { display: flex; gap: 7px; }
+    .hint { font: 500 12.5px/1.4 var(--font); color: var(--ink-4); }
+    .arch { display: flex; align-items: center; gap: 12px; padding: 15px; width: 100%; border-radius: var(--r-list); }
+    .arch .aside { font: 500 12.5px/1 var(--font); color: var(--ink-5); }
+    .arch .chev { font: 700 18px/1 var(--font); color: var(--ink-7); }
+  `,
+})
+export class WorkoutEditorScreen {
+  readonly store = inject(AppStore);
+  private router = inject(Router);
+  private location = inject(Location);
+  readonly id = input<string>();
+  readonly existing = computed(() => (this.id() ? this.store.workouts().find((w) => w.id === this.id()) ?? null : null));
+  readonly appRest = APP_DEFAULT_REST_SECONDS;
+
+  readonly name = signal('');
+  readonly rest = signal<number | null>(null);
+  readonly drafts = signal<Draft[]>([]);
+  readonly newName = signal('');
+  readonly newKind = signal<ExerciseKind>('reps');
+  readonly busy = signal(false);
+
+  readonly suggestions = computed(() => {
+    const used = new Set(this.drafts().map((d) => d.exercise.id));
+    return this.store.activeExercises().filter((e) => !used.has(e.id));
+  });
+  readonly isNew = computed(() => {
+    const n = this.newName().trim().toLowerCase();
+    return n.length > 0 && !this.store.exercises().some((e) => e.name.toLowerCase() === n);
+  });
+
+  constructor() {
+    queueMicrotask(() => {
+      const w = this.existing();
+      if (!w) return;
+      this.name.set(w.name);
+      this.rest.set(w.restSeconds);
+      this.drafts.set(w.exercises.flatMap((we) => {
+        const ex = this.store.exercises().find((e) => e.id === we.exerciseId);
+        return ex ? [{ exercise: ex, sets: we.sets.map((s) => ({ ...s })) }] : [];
+      }));
+    });
+  }
+
+  v(e: Event) { return (e.target as HTMLInputElement).value; }
+  bumpRest(delta: number) {
+    const cur = this.rest() ?? APP_DEFAULT_REST_SECONDS;
+    const next = Math.max(0, Math.min(600, cur + delta));
+    this.rest.set(next === APP_DEFAULT_REST_SECONDS ? null : next);
+  }
+  async add() {
+    const name = this.newName().trim();
+    if (!name) return;
+    const ex = await this.store.ensureExercise(name, this.newKind());
+    if (this.store.saveError()) return;
+    const last = this.drafts().at(-1);
+    const template: SetTarget = ex.kind === 'reps' ? { reps: 10, weight: null, seconds: null } : { reps: null, weight: null, seconds: 60 };
+    const sets = Array.from({ length: last?.sets.length ?? 3 }, () => ({ ...template }));
+    this.drafts.set([...this.drafts(), { exercise: ex, sets }]);
+    this.newName.set('');
+    this.newKind.set('reps');
+  }
+  remove(i: number) { this.drafts.set(this.drafts().filter((_, k) => k !== i)); }
+  addSet(i: number) {
+    this.drafts.set(this.drafts().map((d, k) => (k === i ? { ...d, sets: [...d.sets, { ...(d.sets.at(-1) ?? { reps: 10, weight: null, seconds: 60 }) }] } : d)));
+  }
+  removeSet(i: number, j: number) {
+    this.drafts.set(this.drafts().map((d, k) => (k === i ? { ...d, sets: d.sets.filter((_, m) => m !== j) } : d)));
+  }
+  setVal(i: number, j: number, field: keyof SetTarget, e: Event) {
+    const raw = (e.target as HTMLInputElement).value;
+    const val = raw === '' ? null : Number(raw);
+    this.drafts.set(this.drafts().map((d, k) => (k === i ? { ...d, sets: d.sets.map((s, m) => (m === j ? { ...s, [field]: val } : s)) } : d)));
+  }
+  cancel() { history.length > 1 ? this.location.back() : void this.router.navigate(['/workouts']); }
+
+  async save() {
+    const w = this.existing();
+    const workout: Workout = {
+      id: w?.id ?? newId(),
+      name: this.name().trim(),
+      restSeconds: this.rest(),
+      exercises: this.drafts().map((d) => ({ exerciseId: d.exercise.id, sets: d.sets })),
+      archived: w?.archived ?? false,
+    };
+    this.busy.set(true);
+    await this.store.saveWorkout(workout);
+    this.busy.set(false);
+    if (this.store.saveError()) return;
+    void this.router.navigate(['/workouts'], { replaceUrl: true });
+  }
+  async archive(w: Workout) {
+    await this.store.saveWorkout({ ...w, archived: true });
+    void this.router.navigate(['/workouts'], { replaceUrl: true });
+  }
+}

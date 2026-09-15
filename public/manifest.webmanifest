@@ -1,0 +1,16 @@
+{
+  "name": "Goalbud",
+  "short_name": "Goalbud",
+  "description": "Keep track of the things you meant to do. Nothing here keeps score against you.",
+  "start_url": "/today",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F4ED",
+  "theme_color": "#F7F4ED",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

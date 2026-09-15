@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><style>body{margin:0;background:#EDE8DE;font-family:Figtree,system-ui,sans-serif}a{color:#3F6F52}a:hover{color:#2F5540}.dv-turn{padding:44px 48px 36px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 22px}.dv-tid{font:800 10px ui-monospace,Menlo,monospace;padding:4px 8px;background:#1B1E1C;color:#fff;border-radius:5px;text-decoration:none}.dv-tname{font:700 13px/1.2 Figtree,sans-serif;color:#1B1E1C}.dv-opts{display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}.dv-oid{font:800 10.5px ui-monospace,Menlo,monospace;padding:4px 8px;background:rgba(0,0,0,.08);color:#1B1E1C;border-radius:6px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:500 11.5px/1.3 Figtree,sans-serif;color:rgba(0,0,0,.55);max-width:412px}.dv-opt:target .dv-oid{background:#3F6F52;color:#fff}.dv-next{margin:26px 0 0;font:500 12px/1.6 Figtree,sans-serif;color:rgba(0,0,0,.5)}</style></helmet>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">The remaining screens — same system as <a class="dv-oid" href="#1a">1a</a></span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a"><div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Goal history. Month calendar, filled = done, dash = skipped, blank = anything else. One count, no percentage.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:16px 18px 6px;display:flex;align-items:center;gap:12px">
+<div style="font:800 20px/1 Figtree;color:#6E7671;width:34px">‹</div>
+<div style="flex:1;min-width:0"><div style="font:900 24px/1.15 Figtree;color:#1B1E1C;letter-spacing:-.02em">Read 20 minutes</div><div style="font:600 13px/1.3 Figtree;color:#6E7671;margin-top:4px">Every day · since 4 May</div></div>
+<div style="width:20px;height:20px;border-radius:50%;background:#3F6F52;flex:none"></div>
+</div>
+
+<div style="flex:1;overflow:auto;padding:12px 14px 14px;display:flex;flex-direction:column;gap:12px">
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:24px;padding:18px;display:flex;gap:14px">
+<div style="flex:1"><div style="font:900 34px/1 Figtree;color:#1B1E1C">128</div><div style="font:600 12px/1.3 Figtree;color:#6E7671;margin-top:6px">days logged</div></div>
+<div style="width:1px;background:#F1EDE3"></div>
+<div style="flex:1"><div style="font:900 34px/1 Figtree;color:#1B1E1C">12</div><div style="font:600 12px/1.3 Figtree;color:#6E7671;margin-top:6px">this month</div></div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:24px;padding:18px">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<div style="font:800 17px/1 Figtree;color:#1B1E1C;flex:1">September 2026</div>
+<div style="font:800 16px/1 Figtree;color:#B9B3A5">‹</div><div style="font:800 16px/1 Figtree;color:#E0DACC">›</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px">
+<div style="text-align:center;font:700 11px/1 Figtree;color:#A19C90">M</div><div style="text-align:center;font:700 11px/1 Figtree;color:#A19C90">T</div><div style="text-align:center;font:700 11px/1 Figtree;color:#A19C90">W</div><div style="text-align:center;font:700 11px/1 Figtree;color:#A19C90">T</div><div style="text-align:center;font:700 11px/1 Figtree;color:#A19C90">F</div><div style="text-align:center;font:700 11px/1 Figtree;color:#A19C90">S</div><div style="text-align:center;font:700 11px/1 Figtree;color:#A19C90">S</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">
+<div></div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">1</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">2</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">3</div>
+<div style="aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#C9C3B5">4</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">5</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">6</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">7</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">8</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#F1EDE3;display:flex;align-items:center;justify-content:center"><div style="width:13px;height:3px;border-radius:2px;background:#B9B3A5"></div></div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">10</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">11</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">12</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">13</div>
+<div style="aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:700 13px Figtree;color:#fff">14</div>
+<div style="aspect-ratio:1;border-radius:50%;border:3px solid #1B1E1C;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font:800 13px Figtree;color:#1B1E1C">15</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">16</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">17</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">18</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">19</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">20</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">21</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">22</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">23</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">24</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">25</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">26</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">27</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">28</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">29</div>
+<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:#D8D2C3">30</div>
+</div>
+<div style="display:flex;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid #F1EDE3">
+<div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:50%;background:#3F6F52"></div><div style="font:600 11.5px/1 Figtree;color:#6E7671">Done</div></div>
+<div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:50%;background:#F1EDE3;display:flex;align-items:center;justify-content:center"><div style="width:7px;height:2px;background:#B9B3A5"></div></div><div style="font:600 11.5px/1 Figtree;color:#6E7671">Skipped</div></div>
+<div style="display:flex;align-items:center;gap:7px"><div style="width:14px;height:14px;border-radius:50%;border:2px solid #1B1E1C;box-sizing:border-box"></div><div style="font:600 11.5px/1 Figtree;color:#6E7671">Today</div></div>
+</div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:24px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:15px;border-bottom:1px solid #F1EDE3"><div style="flex:1;font:700 15px/1.2 Figtree;color:#1B1E1C">Edit goal</div><div style="font:500 12px/1 Figtree;color:#A19C90">from this week on</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:15px;border-bottom:1px solid #F1EDE3"><div style="flex:1;font:700 15px/1.2 Figtree;color:#1B1E1C">Pause</div><div style="font:500 12px/1 Figtree;color:#A19C90">hides it from Today</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:15px"><div style="flex:1;font:700 15px/1.2 Figtree;color:#6E7671">Archive</div><div style="font:500 12px/1 Figtree;color:#A19C90">history is kept</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="2b"><div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>New goal. Shape first, then only the fields that shape needs. Keyboard up, name focused.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" keyboard="{{ true }}" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #EFEADF;background:#F7F4ED">
+<div style="font:700 14px/1 Figtree;color:#6E7671">Cancel</div>
+<div style="flex:1;text-align:center;font:800 16px/1 Figtree;color:#1B1E1C">New goal</div>
+<div style="font:800 14px/1 Figtree;color:#FFFFFF;background:#3F6F52;border-radius:999px;padding:10px 16px">Save</div>
+</div>
+
+<div style="flex:1;overflow:auto;padding:16px 16px 20px;display:flex;flex-direction:column;gap:18px">
+<div>
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px">Name</div>
+<div style="background:#FFFFFF;border:2px solid #1B1E1C;border-radius:18px;padding:16px;display:flex;align-items:center"><span style="font:700 18px/1 Figtree;color:#1B1E1C">Stretch 10 min</span><span style="width:2px;height:22px;background:#3F6F52;margin-left:2px"></span></div>
+</div>
+
+<div>
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px">Shape</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+<div style="background:#1B1E1C;border-radius:16px;padding:14px"><div style="font:800 14px/1.2 Figtree;color:#FFFFFF">Scheduled</div><div style="font:500 11.5px/1.3 Figtree;color:#9AA39C;margin-top:5px">On chosen days</div></div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:16px;padding:14px"><div style="font:800 14px/1.2 Figtree;color:#1B1E1C">Weekly count</div><div style="font:500 11.5px/1.3 Figtree;color:#8A8F89;margin-top:5px">N times a week</div></div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:16px;padding:14px"><div style="font:800 14px/1.2 Figtree;color:#1B1E1C">Just log it</div><div style="font:500 11.5px/1.3 Figtree;color:#8A8F89;margin-top:5px">No target</div></div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:16px;padding:14px"><div style="font:800 14px/1.2 Figtree;color:#1B1E1C">Long goal</div><div style="font:500 11.5px/1.3 Figtree;color:#8A8F89;margin-top:5px">With a target date</div></div>
+</div>
+</div>
+
+<div>
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px">Repeats</div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:18px;padding:14px">
+<div style="display:flex;gap:7px;margin-bottom:14px">
+<div style="flex:1;text-align:center;font:800 12px/1 Figtree;color:#FFFFFF;background:#3F6F52;border-radius:10px;padding:11px 0">Every day</div>
+<div style="flex:1;text-align:center;font:700 12px/1 Figtree;color:#6E7671;background:#F4F1E8;border-radius:10px;padding:11px 0">Every N days</div>
+<div style="flex:1;text-align:center;font:700 12px/1 Figtree;color:#6E7671;background:#F4F1E8;border-radius:10px;padding:11px 0">Weekdays</div>
+</div>
+<div style="display:flex;gap:6px">
+<div style="flex:1;aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:800 12px Figtree;color:#fff">M</div>
+<div style="flex:1;aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:800 12px Figtree;color:#fff">T</div>
+<div style="flex:1;aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:800 12px Figtree;color:#fff">W</div>
+<div style="flex:1;aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:800 12px Figtree;color:#fff">T</div>
+<div style="flex:1;aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:800 12px Figtree;color:#fff">F</div>
+<div style="flex:1;aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:800 12px Figtree;color:#fff">S</div>
+<div style="flex:1;aspect-ratio:1;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:800 12px Figtree;color:#fff">S</div>
+</div>
+</div>
+</div>
+
+<div>
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px">Colour &amp; icon</div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;gap:8px">
+<div style="flex:1;aspect-ratio:1;border-radius:11px;background:#3F6F52;border:3px solid #1B1E1C;box-sizing:border-box"></div>
+<div style="flex:1;aspect-ratio:1;border-radius:11px;background:#2F7D8C"></div>
+<div style="flex:1;aspect-ratio:1;border-radius:11px;background:#4A5EC8"></div>
+<div style="flex:1;aspect-ratio:1;border-radius:11px;background:#7E5BA6"></div>
+<div style="flex:1;aspect-ratio:1;border-radius:11px;background:#C25B77"></div>
+<div style="flex:1;aspect-ratio:1;border-radius:11px;background:#C2643A"></div>
+<div style="flex:1;aspect-ratio:1;border-radius:11px;background:#C79A2E"></div>
+<div style="flex:1;aspect-ratio:1;border-radius:11px;background:#7A7468"></div>
+</div>
+<div style="display:flex;gap:8px;align-items:center">
+<div style="width:44px;height:44px;border-radius:14px;background:#E7EDE8;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;background:#3F6F52"></div></div>
+<div style="width:44px;height:44px;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;border:4px solid #B9B3A5;box-sizing:border-box"></div></div>
+<div style="width:44px;height:44px;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:4px;background:#B9B3A5"></div></div>
+<div style="width:44px;height:44px;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:15px;height:15px;border-radius:3px;background:#B9B3A5;transform:rotate(45deg)"></div></div>
+<div style="flex:1;text-align:center;font:700 12px/1 Figtree;color:#6E7671;background:#F4F1E8;border-radius:12px;padding:15px 0">All 30</div>
+</div>
+</div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px">
+<div style="flex:1"><div style="font:700 15px/1.2 Figtree;color:#1B1E1C">This is a workout</div><div style="font:500 12px/1.35 Figtree;color:#8A8F89;margin-top:4px">Finishing a session ticks it off</div></div>
+<div style="width:52px;height:31px;border-radius:999px;background:#E0DACC;display:flex;align-items:center;padding:3px;box-sizing:border-box"><div style="width:25px;height:25px;border-radius:50%;background:#FFFFFF"></div></div>
+</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="2c"><div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Exercise history. Actuals per session; the chart stays a promise until there is a month of data.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:16px 18px 8px;display:flex;align-items:center;gap:12px">
+<div style="font:800 20px/1 Figtree;color:#6E7671;width:34px">‹</div>
+<div style="flex:1"><div style="font:900 24px/1.15 Figtree;color:#1B1E1C;letter-spacing:-.02em">Bench press</div><div style="font:600 13px/1.3 Figtree;color:#6E7671;margin-top:4px">Reps &amp; weight · rest 90 s</div></div>
+</div>
+
+<div style="flex:1;overflow:auto;padding:10px 14px 14px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:24px;padding:18px;display:flex;gap:14px">
+<div style="flex:1"><div style="font:900 30px/1 Figtree;color:#1B1E1C">41</div><div style="font:600 12px/1.3 Figtree;color:#6E7671;margin-top:6px">sessions</div></div>
+<div style="width:1px;background:#F1EDE3"></div>
+<div style="flex:1"><div style="font:900 30px/1 Figtree;color:#1B1E1C">65<span style="font:700 14px Figtree;color:#8A8F89"> kg</span></div><div style="font:600 12px/1.3 Figtree;color:#6E7671;margin-top:6px">top set</div></div>
+</div>
+
+<div style="background:#F2EFE6;border:1px dashed #DED7C7;border-radius:20px;padding:16px;display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:flex-end;gap:4px;height:34px"><div style="width:7px;height:14px;border-radius:2px;background:#DED7C7"></div><div style="width:7px;height:22px;border-radius:2px;background:#DED7C7"></div><div style="width:7px;height:18px;border-radius:2px;background:#DED7C7"></div><div style="width:7px;height:30px;border-radius:2px;background:#DED7C7"></div></div>
+<div style="flex:1;font:500 12.5px/1.45 Figtree;color:#8A8F89">A progress chart appears once there is about a month of data.</div>
+</div>
+
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;padding:6px 8px 2px">Sessions</div>
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><div style="font:800 15px/1 Figtree;color:#1B1E1C">Fri 11 Sep</div><div style="flex:1"></div><div style="font:600 12px/1 Figtree;color:#8A8F89">Push day</div></div>
+<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">8 × 62.5</div>
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">8 × 62.5</div>
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">7 × 62.5</div>
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#E9F0EA;border-radius:9px;padding:10px 12px">6 × 65</div>
+</div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><div style="font:800 15px/1 Figtree;color:#1B1E1C">Wed 9 Sep</div><div style="flex:1"></div><div style="font:600 12px/1 Figtree;color:#8A8F89">Push day</div></div>
+<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">8 × 60</div>
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">8 × 60</div>
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">8 × 60</div>
+</div>
+<div style="font:500 12px/1.3 Figtree;color:#A19C90;margin-top:12px">Left open, closed at midnight. Counted.</div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:16px">
+<div style="display:flex;align-items:baseline;gap:10px"><div style="font:800 15px/1 Figtree;color:#1B1E1C">Mon 7 Sep</div><div style="flex:1"></div><div style="font:600 12px/1 Figtree;color:#8A8F89">Push day</div></div>
+<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">8 × 60</div>
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">7 × 60</div>
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">7 × 60</div>
+<div style="font:700 12.5px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border-radius:9px;padding:10px 12px">6 × 60</div>
+</div>
+</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="2d"><div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>You. Reminder is off until a time is set, and the copy says exactly what will and won’t be sent.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:20px 20px 10px"><div style="font:900 28px/1.1 Figtree;color:#1B1E1C;letter-spacing:-.02em">You</div></div>
+
+<div style="flex:1;overflow:auto;padding:6px 14px 14px;display:flex;flex-direction:column;gap:14px">
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:24px;padding:18px;display:flex;align-items:center;gap:14px">
+<div style="width:52px;height:52px;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;font:900 20px Figtree;color:#fff;flex:none">D</div>
+<div style="flex:1;min-width:0"><div style="font:800 17px/1.2 Figtree;color:#1B1E1C">Daniel</div><div style="font:500 13px/1.3 Figtree;color:#8A8F89;margin-top:4px">daniel@example.com</div></div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:24px;padding:18px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="flex:1"><div style="font:800 17px/1.2 Figtree;color:#1B1E1C">Daily nudge</div><div style="font:500 12.5px/1.4 Figtree;color:#8A8F89;margin-top:4px">One notification, only if something is still open.</div></div>
+<div style="width:52px;height:31px;border-radius:999px;background:#3F6F52;display:flex;align-items:center;justify-content:flex-end;padding:3px;box-sizing:border-box;flex:none"><div style="width:25px;height:25px;border-radius:50%;background:#FFFFFF"></div></div>
+</div>
+<div style="margin-top:16px;display:flex;align-items:center;gap:12px;background:#F4F1E8;border-radius:18px;padding:16px">
+<div style="flex:1;font:700 14px/1 Figtree;color:#6E7671">Time</div>
+<div style="font:900 26px/1 Figtree;color:#1B1E1C;font-variant-numeric:tabular-nums">18:30</div>
+</div>
+<div style="margin-top:14px;background:#E9F0EA;border-radius:16px;padding:14px">
+<div style="font:600 11px/1 Figtree;color:#5F7264;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px">Looks like</div>
+<div style="font:600 13.5px/1.45 Figtree;color:#2F4536">“You have 3 goals today: Read, Walk, Push day.”</div>
+</div>
+</div>
+
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:24px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid #F1EDE3"><div style="flex:1;font:700 15px/1.2 Figtree;color:#1B1E1C">Archive</div><div style="font:500 12.5px/1 Figtree;color:#A19C90">4 goals · 2 exercises</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid #F1EDE3"><div style="flex:1;font:700 15px/1.2 Figtree;color:#1B1E1C">Week starts</div><div style="font:600 12.5px/1 Figtree;color:#6E7671">Monday</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:16px"><div style="flex:1;font:700 15px/1.2 Figtree;color:#1B1E1C">Account</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+</div>
+
+<div style="display:flex;align-items:center;justify-content:center;background:#FFFFFF;border:1px solid #EDE7DA;border-radius:20px;padding:17px;font:800 14px/1 Figtree;color:#6E7671">Sign out</div>
+
+<div style="text-align:center;font:500 11.5px/1.4 Figtree;color:#B9B3A5;padding:4px 0 10px">Goalbud · v1</div>
+</div>
+
+<nav style="display:grid;grid-template-columns:repeat(4,1fr);background:#FFFFFF;border-top:1px solid #EAE4D6;padding:10px 8px 6px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:5px;background:#8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Today</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;border:3px solid #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Goals</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:6px;border-radius:3px;background:#8A8F89;box-shadow:0 8px 0 #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Workouts</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;border-radius:999px;background:#DCE8DE;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50% 50% 45% 45%;background:#3F6F52"></div></div><div style="font:800 11px/1 Figtree;color:#1B1E1C">You</div></div>
+</nav>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="2e"><div class="dv-olabel"><a class="dv-oid" href="#2e">2e</a>Sign in. Email or Google, nothing else. Open signup, no invite copy.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif;padding:0 22px">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;padding-bottom:30px">
+<div>
+<div style="width:64px;height:64px;border-radius:22px;background:#3F6F52;display:flex;align-items:center;justify-content:center;margin-bottom:22px"><div style="width:24px;height:24px;border-radius:50%;border:6px solid #FFFFFF;box-sizing:border-box"></div></div>
+<div style="font:900 38px/1.05 Figtree;color:#1B1E1C;letter-spacing:-.03em">Goalbud</div>
+<div style="font:500 15px/1.5 Figtree;color:#6E7671;margin-top:10px;max-width:290px">Keep track of the things you meant to do. Nothing here keeps score against you.</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="background:#FFFFFF;border:1px solid #E0DACC;border-radius:18px;padding:17px 18px"><div style="font:600 11px/1 Figtree;color:#A19C90;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Email</div><div style="font:600 16px/1 Figtree;color:#1B1E1C">daniel@example.com</div></div>
+<div style="background:#FFFFFF;border:1px solid #E0DACC;border-radius:18px;padding:17px 18px"><div style="font:600 11px/1 Figtree;color:#A19C90;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Password</div><div style="font:700 16px/1 Figtree;color:#1B1E1C;letter-spacing:.2em">••••••••</div></div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="text-align:center;background:#3F6F52;border-radius:20px;padding:19px;font:800 16px/1 Figtree;color:#FFFFFF">Sign in</div>
+<div style="display:flex;align-items:center;gap:12px;padding:2px 0"><div style="flex:1;height:1px;background:#E0DACC"></div><div style="font:600 11.5px/1 Figtree;color:#A19C90">or</div><div style="flex:1;height:1px;background:#E0DACC"></div></div>
+<div style="display:flex;align-items:center;justify-content:center;gap:10px;background:#FFFFFF;border:1px solid #E0DACC;border-radius:20px;padding:18px"><div style="width:20px;height:20px;border-radius:50%;background:#E0DACC"></div><div style="font:800 15px/1 Figtree;color:#1B1E1C">Continue with Google</div></div>
+</div>
+
+<div style="text-align:center;font:600 13.5px/1 Figtree;color:#6E7671">New here? <span style="color:#3F6F52;font-weight:800">Create an account</span></div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="2f"><div class="dv-olabel"><a class="dv-oid" href="#2f">2f</a>Workout picker — the sheet that opens when an exercise goal is tapped on Today.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif;position:relative">
+<div style="flex:1;overflow:hidden;filter:saturate(.7)">
+<div style="padding:22px 20px 14px">
+<div style="font:600 13px/1 Figtree;color:#8A8F89;letter-spacing:.06em;text-transform:uppercase">Tuesday 15 September</div>
+<div style="font:900 30px/1.15 Figtree;color:#1B1E1C;margin-top:8px;letter-spacing:-.02em">Morning, Daniel</div>
+</div>
+<div style="padding:4px 16px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:26px;padding:16px;height:52px"></div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:26px;padding:16px;height:52px"></div>
+</div>
+<div style="position:absolute;inset:0;background:rgba(27,30,28,.45)"></div>
+</div>
+
+<div style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-radius:30px 30px 0 0;padding:14px 18px 22px">
+<div style="width:44px;height:5px;border-radius:3px;background:#E0DACC;margin:0 auto 18px"></div>
+<div style="font:900 22px/1.2 Figtree;color:#1B1E1C">Push day</div>
+<div style="font:500 13.5px/1.4 Figtree;color:#6E7671;margin-top:6px;margin-bottom:18px">Which workout are you doing?</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="border:2px solid #1B1E1C;border-radius:20px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="flex:1"><div style="font:800 17px/1.2 Figtree;color:#1B1E1C">Push day</div><div style="font:500 12.5px/1.3 Figtree;color:#8A8F89;margin-top:4px">5 exercises · last done Fri</div></div>
+<div style="width:44px;height:44px;border-radius:50%;background:#1B1E1C;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:0;height:0;border-left:13px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px"></div></div>
+</div>
+<div style="background:#F4F1E8;border-radius:20px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="flex:1"><div style="font:800 17px/1.2 Figtree;color:#1B1E1C">Pull day</div><div style="font:500 12.5px/1.3 Figtree;color:#8A8F89;margin-top:4px">4 exercises · last done Wed</div></div>
+<div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div>
+</div>
+<div style="background:#F4F1E8;border-radius:20px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="flex:1"><div style="font:800 17px/1.2 Figtree;color:#1B1E1C">Freestyle</div><div style="font:500 12.5px/1.3 Figtree;color:#8A8F89;margin-top:4px">Add exercises as you go</div></div>
+<div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div>
+</div>
+</div>
+
+<div style="display:flex;gap:10px;margin-top:16px">
+<div style="flex:1;text-align:center;font:700 14px/1 Figtree;color:#6E7671;background:#F4F1E8;border-radius:16px;padding:16px">Skip today</div>
+<div style="flex:1;text-align:center;font:700 14px/1 Figtree;color:#6E7671;background:#F4F1E8;border-radius:16px;padding:16px">Just tick it</div>
+</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="2g"><div class="dv-olabel"><a class="dv-oid" href="#2g">2g</a>First run. The empty Today — an invitation, not a scoreboard at zero.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:22px 20px 14px">
+<div style="font:600 13px/1 Figtree;color:#8A8F89;letter-spacing:.06em;text-transform:uppercase">Tuesday 15 September</div>
+<div style="font:900 30px/1.15 Figtree;color:#1B1E1C;margin-top:8px;letter-spacing:-.02em">Morning, Daniel</div>
+</div>
+
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 30px 40px;gap:8px">
+<div style="width:96px;height:96px;border-radius:32px;background:#E7EDE8;display:flex;align-items:center;justify-content:center;margin-bottom:18px"><div style="width:34px;height:34px;border-radius:50%;border:7px solid #3F6F52;box-sizing:border-box"></div></div>
+<div style="font:900 24px/1.2 Figtree;color:#1B1E1C;text-align:center;letter-spacing:-.02em">Nothing here yet</div>
+<div style="font:500 14.5px/1.55 Figtree;color:#6E7671;text-align:center;max-width:280px;margin-top:4px">Add the first thing you want to keep track of. One is plenty to start.</div>
+<div style="display:flex;align-items:center;gap:9px;background:#3F6F52;border-radius:20px;padding:18px 26px;margin-top:22px"><span style="font:800 18px/1 Figtree;color:#fff">+</span><span style="font:800 15px/1 Figtree;color:#FFFFFF">Add a goal</span></div>
+<div style="font:600 13px/1 Figtree;color:#8A8F89;margin-top:16px">or set up a workout</div>
+</div>
+
+<nav style="display:grid;grid-template-columns:repeat(4,1fr);background:#FFFFFF;border-top:1px solid #EAE4D6;padding:10px 8px 6px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;border-radius:999px;background:#DCE8DE;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:5px;background:#3F6F52"></div></div><div style="font:800 11px/1 Figtree;color:#1B1E1C">Today</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;border:3px solid #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Goals</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:6px;border-radius:3px;background:#8A8F89;box-shadow:0 8px 0 #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Workouts</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50% 50% 45% 45%;background:#8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">You</div></div>
+</nav>
+</div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">Try next: “add the workout template editor and the ‘still going?’ resume prompt” · “make <a class="dv-oid" href="#2b">2b</a> show the weekly-count and long-goal variants” · “turn the whole set into a tappable flow”</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Goalbud — first pass</span></div>
+
+<div style="max-width:880px;margin:0 0 30px;font:400 13.5px/1.7 Figtree,sans-serif;color:#3D423F">
+<p style="margin:0 0 10px"><strong style="font-weight:800">What I assumed.</strong> Friendly-chunky: Figtree 700–900, 24–28px radii, flat fills, no gradients. Sage <strong style="font-weight:700;color:#3F6F52">#3F6F52</strong> is the app accent and the first of eight goal colours. Warm off-white ground so completed states can be a tint rather than a badge. Icons are placeholder glyphs — the real ~30 get drawn later.</p>
+<p style="margin:0 0 10px"><strong style="font-weight:800">How the no-shame rules landed in pixels.</strong> Nothing undone is ever coloured: empty circles, no counts of what is missing. Weekly goals say “2 this week”, never “2 of 3”. Skipped renders as a grey dash and a kind line. There is no red anywhere in the palette, and no progress bar that can be read as “short of target”.</p>
+<p style="margin:0"><strong style="font-weight:800">Open questions.</strong> Whether Today should group Done into a collapsed footer (shown in <a class="dv-oid" href="#1b">1b</a>), and whether skip lives behind a ⋯ or sits in the open.</p>
+</div>
+
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Today — roomy cards. One card per goal, done toggle on the right, skip in the open on the active card.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:22px 20px 14px">
+<div style="font:600 13px/1 Figtree;color:#8A8F89;letter-spacing:.06em;text-transform:uppercase">Tuesday 15 September</div>
+<div style="font:900 30px/1.15 Figtree;color:#1B1E1C;margin-top:8px;letter-spacing:-.02em">Morning, Daniel</div>
+<div style="font:500 14px/1.4 Figtree;color:#6E7671;margin-top:6px">Five things are open today.</div>
+</div>
+
+<div style="flex:1;overflow:auto;padding:4px 16px 16px;display:flex;flex-direction:column;gap:12px">
+
+<article style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:26px;padding:16px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:14px">
+<div style="width:48px;height:48px;border-radius:16px;background:#E7EDE8;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:20px;height:20px;border-radius:50%;border:4px solid #3F6F52"></div></div>
+<div style="flex:1;min-width:0">
+<div style="font:800 18px/1.2 Figtree;color:#1B1E1C">Read 20 minutes</div>
+<div style="font:500 13px/1.3 Figtree;color:#6E7671;margin-top:4px">Every day</div>
+</div>
+<div style="width:54px;height:54px;border-radius:50%;border:3px solid #DED7C7;flex:none"></div>
+</div>
+<div style="display:flex;gap:8px">
+<div style="font:700 13px/1 Figtree;color:#6E7671;background:#F4F1E8;border-radius:999px;padding:11px 16px">Skip today</div>
+<div style="font:700 13px/1 Figtree;color:#6E7671;background:#F4F1E8;border-radius:999px;padding:11px 16px">History</div>
+</div>
+</article>
+
+<article style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:26px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="width:48px;height:48px;border-radius:16px;background:#E5EEF0;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:20px;height:6px;border-radius:3px;background:#2F7D8C;box-shadow:0 9px 0 #2F7D8C"></div></div>
+<div style="flex:1;min-width:0">
+<div style="font:800 18px/1.2 Figtree;color:#1B1E1C">Swim</div>
+<div style="font:500 13px/1.3 Figtree;color:#6E7671;margin-top:4px">2 this week · 3 times a week</div>
+</div>
+<div style="font:800 16px/1 Figtree;color:#FFFFFF;background:#2F7D8C;border-radius:999px;padding:16px 20px;flex:none">+1</div>
+</article>
+
+<article style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:26px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="width:48px;height:48px;border-radius:16px;background:#F3E9DF;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:18px;height:18px;background:#C2643A;transform:rotate(45deg);border-radius:3px"></div></div>
+<div style="flex:1;min-width:0">
+<div style="font:800 18px/1.2 Figtree;color:#1B1E1C">Push day</div>
+<div style="font:500 13px/1.3 Figtree;color:#6E7671;margin-top:4px">Pick a workout to start</div>
+</div>
+<div style="width:54px;height:54px;border-radius:50%;background:#C2643A;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:0;height:0;border-left:15px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px"></div></div>
+</article>
+
+<article style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:26px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="width:48px;height:48px;border-radius:16px;background:#EFE8F4;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:18px;height:18px;border-radius:5px;background:#7E5BA6"></div></div>
+<div style="flex:1;min-width:0">
+<div style="font:600 11px/1 Figtree;color:#7E5BA6;letter-spacing:.05em;text-transform:uppercase">Finish the painting</div>
+<div style="font:800 18px/1.2 Figtree;color:#1B1E1C;margin-top:5px">Paint 30 minutes</div>
+</div>
+<div style="width:54px;height:54px;border-radius:50%;border:3px solid #DED7C7;flex:none"></div>
+</article>
+
+<article style="background:#F2EFE6;border:1px solid #EAE4D6;border-radius:26px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="width:48px;height:48px;border-radius:16px;background:#E8E3D6;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:20px;height:3px;border-radius:2px;background:#9A9589"></div></div>
+<div style="flex:1;min-width:0">
+<div style="font:800 18px/1.2 Figtree;color:#6E7671">Walk the loop</div>
+<div style="font:500 13px/1.35 Figtree;color:#8A8F89;margin-top:4px">Life happens. You can pick it up later.</div>
+</div>
+<div style="width:54px;height:54px;border-radius:50%;background:#E8E3D6;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:18px;height:3px;border-radius:2px;background:#9A9589"></div></div>
+</article>
+
+<div style="font:700 12px/1 Figtree;color:#8A8F89;letter-spacing:.07em;text-transform:uppercase;padding:14px 8px 2px">Done today · 2</div>
+
+<article style="background:#E9F0EA;border:1px solid #DCE7DE;border-radius:26px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="width:48px;height:48px;border-radius:16px;background:#D8E5DA;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:18px;height:18px;border-radius:50%;background:#3F6F52"></div></div>
+<div style="flex:1;min-width:0"><div style="font:800 18px/1.2 Figtree;color:#38493D">Water the plants</div>
+<div style="font:500 13px/1.3 Figtree;color:#5F7264;margin-top:4px">Logged 8:12</div></div>
+<div style="width:54px;height:54px;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:20px;height:11px;border-left:4px solid #fff;border-bottom:4px solid #fff;transform:rotate(-45deg) translate(2px,-3px);border-radius:2px"></div></div>
+</article>
+
+<article style="background:#E9F0EA;border:1px solid #DCE7DE;border-radius:26px;padding:16px;display:flex;align-items:center;gap:14px">
+<div style="width:48px;height:48px;border-radius:16px;background:#D8E5DA;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:18px;height:18px;border-radius:50%;border:4px solid #3F6F52"></div></div>
+<div style="flex:1;min-width:0"><div style="font:800 18px/1.2 Figtree;color:#38493D">Vitamins</div>
+<div style="font:500 13px/1.3 Figtree;color:#5F7264;margin-top:4px">Logged 7:40</div></div>
+<div style="width:54px;height:54px;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:20px;height:11px;border-left:4px solid #fff;border-bottom:4px solid #fff;transform:rotate(-45deg) translate(2px,-3px);border-radius:2px"></div></div>
+</article>
+</div>
+
+<nav style="display:grid;grid-template-columns:repeat(4,1fr);background:#FFFFFF;border-top:1px solid #EAE4D6;padding:10px 8px 6px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;border-radius:999px;background:#DCE8DE;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:5px;background:#3F6F52"></div></div><div style="font:800 11px/1 Figtree;color:#1B1E1C">Today</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;border:3px solid #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Goals</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:6px;border-radius:3px;background:#8A8F89;box-shadow:0 8px 0 #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Workouts</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50% 50% 45% 45%;background:#8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">You</div></div>
+</nav>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Today — compact rows, grouped by “Due” / “Anytime” / “Done”. Same rules, roughly twice the goals on screen. Skip lives behind the ⋯.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:20px 20px 12px;display:flex;align-items:flex-end;justify-content:space-between">
+<div><div style="font:900 28px/1.1 Figtree;color:#1B1E1C;letter-spacing:-.02em">Today</div>
+<div style="font:600 13px/1.3 Figtree;color:#6E7671;margin-top:5px">Tue 15 Sep · 5 open</div></div>
+<div style="font:800 13px/1 Figtree;color:#3F6F52;background:#E4EDE6;border-radius:999px;padding:11px 15px">2 done</div>
+</div>
+
+<div style="flex:1;overflow:auto;padding:0 14px 14px">
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;padding:14px 8px 8px">Due today</div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #F1EDE3">
+<div style="width:5px;height:34px;border-radius:3px;background:#3F6F52;flex:none"></div>
+<div style="flex:1;min-width:0"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Read 20 minutes</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Every day</div></div>
+<div style="font:800 18px/1 Figtree;color:#B9B3A5;padding:0 6px">···</div>
+<div style="width:40px;height:40px;border-radius:50%;border:3px solid #DED7C7;flex:none"></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #F1EDE3">
+<div style="width:5px;height:34px;border-radius:3px;background:#C2643A;flex:none"></div>
+<div style="flex:1;min-width:0"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Push day</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Workout · Mon Wed Fri</div></div>
+<div style="font:800 18px/1 Figtree;color:#B9B3A5;padding:0 6px">···</div>
+<div style="width:40px;height:40px;border-radius:50%;background:#C2643A;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:0;height:0;border-left:12px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:3px"></div></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #F1EDE3">
+<div style="width:5px;height:34px;border-radius:3px;background:#7E5BA6;flex:none"></div>
+<div style="flex:1;min-width:0"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Paint 30 minutes</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Finish the painting</div></div>
+<div style="font:800 18px/1 Figtree;color:#B9B3A5;padding:0 6px">···</div>
+<div style="width:40px;height:40px;border-radius:50%;border:3px solid #DED7C7;flex:none"></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px">
+<div style="width:5px;height:34px;border-radius:3px;background:#E0DACC;flex:none"></div>
+<div style="flex:1;min-width:0"><div style="font:700 16px/1.2 Figtree;color:#8A8F89">Walk the loop</div><div style="font:500 12px/1.3 Figtree;color:#A19C90;margin-top:3px">Skipped · pick it up later</div></div>
+<div style="width:40px;height:40px;border-radius:50%;background:#F1EDE3;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:14px;height:3px;border-radius:2px;background:#B9B3A5"></div></div>
+</div>
+</div>
+
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;padding:18px 8px 8px">Anytime</div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #F1EDE3">
+<div style="width:5px;height:34px;border-radius:3px;background:#2F7D8C;flex:none"></div>
+<div style="flex:1;min-width:0"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Swim</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">2 this week</div></div>
+<div style="font:800 14px/1 Figtree;color:#fff;background:#2F7D8C;border-radius:999px;padding:12px 16px;flex:none">+1</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px">
+<div style="width:5px;height:34px;border-radius:3px;background:#C79A2E;flex:none"></div>
+<div style="flex:1;min-width:0"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Call mum</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Whenever</div></div>
+<div style="font:800 14px/1 Figtree;color:#7A6318;background:#F6EDD6;border-radius:999px;padding:12px 16px;flex:none">Log</div>
+</div>
+</div>
+
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;padding:18px 8px 8px">Done today</div>
+<div style="background:#E9F0EA;border:1px solid #DCE7DE;border-radius:22px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #DCE7DE">
+<div style="width:26px;height:26px;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:11px;height:6px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg) translate(1px,-2px)"></div></div>
+<div style="flex:1;font:700 15px/1.2 Figtree;color:#38493D">Water the plants</div>
+<div style="font:600 12px/1 Figtree;color:#6C7F71">8:12</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px">
+<div style="width:26px;height:26px;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:11px;height:6px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg) translate(1px,-2px)"></div></div>
+<div style="flex:1;font:700 15px/1.2 Figtree;color:#38493D">Vitamins</div>
+<div style="font:600 12px/1 Figtree;color:#6C7F71">7:40</div>
+</div>
+</div>
+</div>
+
+<nav style="display:grid;grid-template-columns:repeat(4,1fr);background:#FFFFFF;border-top:1px solid #EAE4D6;padding:10px 8px 6px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;border-radius:999px;background:#DCE8DE;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:5px;background:#3F6F52"></div></div><div style="font:800 11px/1 Figtree;color:#1B1E1C">Today</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;border:3px solid #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Goals</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:6px;border-radius:3px;background:#8A8F89;box-shadow:0 8px 0 #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Workouts</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50% 50% 45% 45%;background:#8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">You</div></div>
+</nav>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Live session — full list. Everything visible, sets tick in place, rest timer as a bottom bar.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="background:#1B1E1C;padding:16px 18px;display:flex;align-items:center;gap:14px">
+<div style="flex:1;min-width:0"><div style="font:800 19px/1.2 Figtree;color:#FFFFFF">Push day</div><div style="font:600 12px/1.3 Figtree;color:#9AA39C;margin-top:4px">3 of 5 exercises</div></div>
+<div style="font:900 22px/1 Figtree;color:#FFFFFF;font-variant-numeric:tabular-nums">24:07</div>
+<div style="font:800 13px/1 Figtree;color:#1B1E1C;background:#8FD3A6;border-radius:999px;padding:12px 16px">Finish</div>
+</div>
+
+<div style="flex:1;overflow:auto;padding:14px 14px 0;display:flex;flex-direction:column;gap:12px">
+
+<section style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:14px">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:26px;height:26px;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center"><div style="width:11px;height:6px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg) translate(1px,-2px)"></div></div><div style="font:800 16px/1.2 Figtree;color:#6E7671">Bench press</div><div style="flex:1"></div><div style="font:600 12px/1 Figtree;color:#8A8F89">4 sets</div></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<div style="font:700 12px/1 Figtree;color:#5F7264;background:#E9F0EA;border-radius:9px;padding:9px 11px">8 × 60</div>
+<div style="font:700 12px/1 Figtree;color:#5F7264;background:#E9F0EA;border-radius:9px;padding:9px 11px">8 × 60</div>
+<div style="font:700 12px/1 Figtree;color:#5F7264;background:#E9F0EA;border-radius:9px;padding:9px 11px">7 × 60</div>
+<div style="font:700 12px/1 Figtree;color:#5F7264;background:#E9F0EA;border-radius:9px;padding:9px 11px">6 × 60</div>
+</div>
+</section>
+
+<section style="background:#FFFFFF;border:2px solid #1B1E1C;border-radius:22px;padding:14px">
+<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px"><div style="font:900 19px/1.2 Figtree;color:#1B1E1C">Overhead press</div><div style="flex:1"></div><div style="font:700 12px/1 Figtree;color:#8A8F89">set 3 of 4</div></div>
+
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F1EDE3">
+<div style="width:26px;font:800 14px/1 Figtree;color:#B9B3A5">1</div>
+<div style="flex:1;font:700 15px/1 Figtree;color:#6E7671">10 × 30 kg</div>
+<div style="width:36px;height:36px;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center"><div style="width:14px;height:7px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg) translate(1px,-2px)"></div></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F1EDE3">
+<div style="width:26px;font:800 14px/1 Figtree;color:#B9B3A5">2</div>
+<div style="flex:1;font:700 15px/1 Figtree;color:#6E7671">9 × 30 kg</div>
+<div style="width:36px;height:36px;border-radius:50%;background:#3F6F52;display:flex;align-items:center;justify-content:center"><div style="width:14px;height:7px;border-left:3px solid #fff;border-bottom:3px solid #fff;transform:rotate(-45deg) translate(1px,-2px)"></div></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 0 8px;border-bottom:1px solid #F1EDE3">
+<div style="width:26px;font:900 15px/1 Figtree;color:#1B1E1C">3</div>
+<div style="flex:1;display:flex;gap:8px">
+<div style="font:800 15px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border:1.5px solid #E0DACC;border-radius:11px;padding:11px 14px">10 reps</div>
+<div style="font:800 15px/1 Figtree;color:#1B1E1C;background:#F4F1E8;border:1.5px solid #E0DACC;border-radius:11px;padding:11px 14px">30 kg</div>
+</div>
+<div style="width:40px;height:40px;border-radius:50%;border:3px solid #1B1E1C"></div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 0">
+<div style="width:26px;font:800 14px/1 Figtree;color:#B9B3A5">4</div>
+<div style="flex:1;font:700 15px/1 Figtree;color:#B9B3A5">10 × 30 kg</div>
+<div style="width:36px;height:36px;border-radius:50%;border:3px solid #E5DFD1"></div>
+</div>
+</section>
+
+<section style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:14px;display:flex;align-items:center;gap:12px">
+<div style="flex:1"><div style="font:800 16px/1.2 Figtree;color:#1B1E1C">Cable fly</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:4px">3 sets · 12 × 15 kg</div></div>
+<div style="font:700 12px/1 Figtree;color:#8A8F89;background:#F4F1E8;border-radius:999px;padding:10px 13px">Up next</div>
+</section>
+
+<section style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:14px;display:flex;align-items:center;gap:12px">
+<div style="flex:1"><div style="font:800 16px/1.2 Figtree;color:#1B1E1C">Plank</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:4px">3 sets · 60 s</div></div>
+</section>
+
+<div style="height:8px"></div>
+</div>
+
+<div style="background:#1B1E1C;padding:14px 18px 16px">
+<div style="display:flex;align-items:center;gap:14px">
+<div style="font:900 30px/1 Figtree;color:#8FD3A6;font-variant-numeric:tabular-nums">1:22</div>
+<div style="flex:1"><div style="font:700 12px/1 Figtree;color:#9AA39C;margin-bottom:8px">Rest</div><div style="height:8px;border-radius:4px;background:#333833;overflow:hidden"><div style="width:62%;height:100%;background:#8FD3A6;border-radius:4px"></div></div></div>
+<div style="font:800 13px/1 Figtree;color:#FFFFFF;border:2px solid #4A504B;border-radius:999px;padding:11px 15px">Skip</div>
+</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="1d"><div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Live session — one set at a time. Thumb-sized targets, giant numbers, rest takes over the screen. Shown mid-rest.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#1B1E1C;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:16px 20px;display:flex;align-items:center;gap:12px">
+<div style="flex:1;font:700 13px/1.2 Figtree;color:#9AA39C">Push day · 24:07</div>
+<div style="font:800 12px/1 Figtree;color:#9AA39C;border:2px solid #333833;border-radius:999px;padding:9px 13px">Finish</div>
+</div>
+
+<div style="padding:0 20px">
+<div style="display:flex;gap:6px">
+<div style="flex:1;height:6px;border-radius:3px;background:#8FD3A6"></div>
+<div style="flex:1;height:6px;border-radius:3px;background:#8FD3A6"></div>
+<div style="flex:1;height:6px;border-radius:3px;background:#8FD3A6"></div>
+<div style="flex:1;height:6px;border-radius:3px;background:#333833"></div>
+<div style="flex:1;height:6px;border-radius:3px;background:#333833"></div>
+</div>
+</div>
+
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:6px">
+<div style="font:700 13px/1 Figtree;color:#9AA39C;letter-spacing:.1em;text-transform:uppercase">Resting</div>
+<div style="width:236px;height:236px;border-radius:50%;background:conic-gradient(#8FD3A6 0 62%,#2A2E2B 62% 100%);display:flex;align-items:center;justify-content:center;margin:10px 0">
+<div style="width:198px;height:198px;border-radius:50%;background:#1B1E1C;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+<div style="font:900 62px/1 Figtree;color:#FFFFFF;font-variant-numeric:tabular-nums;letter-spacing:-.03em">1:22</div>
+<div style="font:600 13px/1 Figtree;color:#9AA39C">of 1:30</div>
+</div>
+</div>
+<div style="font:800 14px/1 Figtree;color:#1B1E1C;background:#8FD3A6;border-radius:999px;padding:16px 28px;margin-top:4px">Skip rest</div>
+</div>
+
+<div style="background:#24272500;padding:0 16px 16px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#262A27;border-radius:24px;padding:18px">
+<div style="display:flex;align-items:baseline;gap:10px"><div style="font:900 22px/1.15 Figtree;color:#FFFFFF">Overhead press</div><div style="flex:1"></div><div style="font:700 12px/1 Figtree;color:#9AA39C">set 4 of 4</div></div>
+<div style="display:flex;gap:10px;margin-top:16px">
+<div style="flex:1;background:#1B1E1C;border-radius:18px;padding:14px 16px"><div style="font:600 11px/1 Figtree;color:#9AA39C;letter-spacing:.07em;text-transform:uppercase">Reps</div><div style="font:900 34px/1 Figtree;color:#FFFFFF;margin-top:8px">10</div></div>
+<div style="flex:1;background:#1B1E1C;border-radius:18px;padding:14px 16px"><div style="font:600 11px/1 Figtree;color:#9AA39C;letter-spacing:.07em;text-transform:uppercase">Weight</div><div style="font:900 34px/1 Figtree;color:#FFFFFF;margin-top:8px">30<span style="font:700 16px/1 Figtree;color:#9AA39C"> kg</span></div></div>
+</div>
+<div style="display:flex;align-items:center;justify-content:center;gap:10px;background:#8FD3A6;border-radius:20px;padding:20px;margin-top:14px">
+<div style="width:20px;height:11px;border-left:4px solid #1B1E1C;border-bottom:4px solid #1B1E1C;transform:rotate(-45deg) translate(2px,-3px)"></div>
+<div style="font:900 18px/1 Figtree;color:#1B1E1C">Set done</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:0 6px">
+<div style="font:700 12px/1 Figtree;color:#6E756F">Next</div>
+<div style="font:700 13px/1 Figtree;color:#9AA39C">Cable fly · 3 × 12</div>
+</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="1e"><div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Goals — active, long goals with their children, paused, archive. Colour dot is the goal colour; no state ever reads as failure.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:20px 20px 10px;display:flex;align-items:center;gap:12px">
+<div style="flex:1;font:900 28px/1.1 Figtree;color:#1B1E1C;letter-spacing:-.02em">Goals</div>
+<div style="display:flex;align-items:center;gap:8px;font:800 14px/1 Figtree;color:#FFFFFF;background:#3F6F52;border-radius:999px;padding:13px 18px"><span style="font-size:17px;line-height:1">+</span>New</div>
+</div>
+
+<div style="flex:1;overflow:auto;padding:0 14px 14px">
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;padding:14px 8px 8px">Active · 6</div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #F1EDE3"><div style="width:14px;height:14px;border-radius:50%;background:#3F6F52;flex:none"></div><div style="flex:1"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Read 20 minutes</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Every day · 128 days logged</div></div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #F1EDE3"><div style="width:14px;height:14px;border-radius:50%;background:#2F7D8C;flex:none"></div><div style="flex:1"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Swim</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">3 times a week · 2 this week</div></div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #F1EDE3"><div style="width:14px;height:14px;border-radius:50%;background:#C2643A;flex:none"></div><div style="flex:1"><div style="display:flex;align-items:center;gap:7px"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Push day</div><div style="font:800 9.5px/1 Figtree;color:#8A4B27;background:#F6E6DC;border-radius:5px;padding:4px 6px;letter-spacing:.05em">WORKOUT</div></div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Mon, Wed, Fri</div></div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid #F1EDE3"><div style="width:14px;height:14px;border-radius:50%;background:#C79A2E;flex:none"></div><div style="flex:1"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Call mum</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">No target · 31 days logged</div></div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:14px"><div style="width:14px;height:14px;border-radius:50%;background:#C25B77;flex:none"></div><div style="flex:1"><div style="font:700 16px/1.2 Figtree;color:#1B1E1C">Water the plants</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Every 3 days</div></div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+</div>
+
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;padding:18px 8px 8px">Long goals</div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:16px">
+<div style="display:flex;align-items:flex-start;gap:12px"><div style="width:14px;height:14px;border-radius:50%;background:#7E5BA6;flex:none;margin-top:5px"></div>
+<div style="flex:1"><div style="font:800 18px/1.2 Figtree;color:#1B1E1C">Finish the painting</div><div style="font:500 13px/1.3 Figtree;color:#6E7671;margin-top:5px">By 31 October · 12 sessions so far</div></div>
+<div style="width:34px;height:34px;border-radius:50%;border:3px solid #DED7C7;flex:none"></div></div>
+<div style="margin-top:14px;padding-top:12px;border-top:1px solid #F1EDE3;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:2px;background:#E0DACC"></div><div style="flex:1;font:600 14px/1.2 Figtree;color:#3D423F">Paint 30 minutes<span style="font:500 12px Figtree;color:#8A8F89"> · every day</span></div></div>
+<div style="display:flex;align-items:center;gap:10px"><div style="width:22px;height:2px;background:#E0DACC"></div><div style="flex:1;font:600 14px/1.2 Figtree;color:#3D423F">Buy varnish<span style="font:500 12px Figtree;color:#8A8F89"> · no target</span></div></div>
+</div>
+</div>
+
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;padding:18px 8px 8px">Paused · 1</div>
+<div style="background:#F2EFE6;border:1px solid #EAE4D6;border-radius:22px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:14px"><div style="width:14px;height:14px;border-radius:50%;background:#D8D2C3;flex:none"></div><div style="flex:1"><div style="font:700 16px/1.2 Figtree;color:#6E7671">Spanish, 15 min</div><div style="font:500 12px/1.3 Figtree;color:#A19C90;margin-top:3px">Paused since 2 Sep · hidden from Today</div></div><div style="font:800 12px/1 Figtree;color:#3F6F52;background:#E4EDE6;border-radius:999px;padding:10px 13px">Resume</div></div>
+</div>
+
+<div style="margin-top:14px;background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:15px;display:flex;align-items:center;gap:12px">
+<div style="flex:1;font:700 15px/1.2 Figtree;color:#6E7671">Archive</div><div style="font:600 13px/1 Figtree;color:#A19C90">4 goals</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div>
+</div>
+</div>
+
+<nav style="display:grid;grid-template-columns:repeat(4,1fr);background:#FFFFFF;border-top:1px solid #EAE4D6;padding:10px 8px 6px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:5px;background:#8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Today</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;border-radius:999px;background:#DCE8DE;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;border:4px solid #3F6F52"></div></div><div style="font:800 11px/1 Figtree;color:#1B1E1C">Goals</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:6px;border-radius:3px;background:#8A8F89;box-shadow:0 8px 0 #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Workouts</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50% 50% 45% 45%;background:#8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">You</div></div>
+</nav>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="1f"><div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>Workouts — templates on top, exercise library below, one obvious way to start.</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" hint-size="412px,892px">
+<div style="height:100%;background:#F7F4ED;display:flex;flex-direction:column;font-family:Figtree,sans-serif">
+<div style="padding:20px 20px 10px"><div style="font:900 28px/1.1 Figtree;color:#1B1E1C;letter-spacing:-.02em">Workouts</div></div>
+
+<div style="flex:1;overflow:auto;padding:6px 14px 14px">
+<div style="background:#1B1E1C;border-radius:24px;padding:18px;display:flex;align-items:center;gap:14px">
+<div style="width:52px;height:52px;border-radius:50%;background:#8FD3A6;display:flex;align-items:center;justify-content:center;flex:none"><div style="width:0;height:0;border-left:16px solid #1B1E1C;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px"></div></div>
+<div style="flex:1"><div style="font:900 19px/1.2 Figtree;color:#FFFFFF">Start a session</div><div style="font:500 13px/1.3 Figtree;color:#9AA39C;margin-top:4px">Pick a workout, or go freestyle</div></div>
+</div>
+
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;padding:20px 8px 8px">Your workouts</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:16px">
+<div style="display:flex;align-items:center;gap:12px"><div style="font:800 18px/1.2 Figtree;color:#1B1E1C;flex:1">Push day</div><div style="font:600 12px/1 Figtree;color:#8A8F89">5 exercises · 18 sets</div></div>
+<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+<div style="font:600 12px/1 Figtree;color:#5C625E;background:#F4F1E8;border-radius:8px;padding:9px 11px">Bench press</div>
+<div style="font:600 12px/1 Figtree;color:#5C625E;background:#F4F1E8;border-radius:8px;padding:9px 11px">Overhead press</div>
+<div style="font:600 12px/1 Figtree;color:#5C625E;background:#F4F1E8;border-radius:8px;padding:9px 11px">Cable fly</div>
+<div style="font:600 12px/1 Figtree;color:#8A8F89;background:#F4F1E8;border-radius:8px;padding:9px 11px">+2</div>
+</div>
+</div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;padding:16px">
+<div style="display:flex;align-items:center;gap:12px"><div style="font:800 18px/1.2 Figtree;color:#1B1E1C;flex:1">Pull day</div><div style="font:600 12px/1 Figtree;color:#8A8F89">4 exercises · 15 sets</div></div>
+<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
+<div style="font:600 12px/1 Figtree;color:#5C625E;background:#F4F1E8;border-radius:8px;padding:9px 11px">Rows</div>
+<div style="font:600 12px/1 Figtree;color:#5C625E;background:#F4F1E8;border-radius:8px;padding:9px 11px">Lat pulldown</div>
+<div style="font:600 12px/1 Figtree;color:#8A8F89;background:#F4F1E8;border-radius:8px;padding:9px 11px">+2</div>
+</div>
+</div>
+<div style="border:2px dashed #DED7C7;border-radius:22px;padding:15px;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font:800 17px/1 Figtree;color:#8A8F89">+</span><span style="font:700 14px/1 Figtree;color:#8A8F89">New workout</span></div>
+</div>
+
+<div style="display:flex;align-items:baseline;padding:20px 8px 8px"><div style="flex:1;font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase">Exercises · 14</div><div style="font:700 12px/1 Figtree;color:#3F6F52">See all</div></div>
+<div style="background:#FFFFFF;border:1px solid #EDE7DA;border-radius:22px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #F1EDE3"><div style="flex:1"><div style="font:700 15px/1.2 Figtree;color:#1B1E1C">Bench press</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Reps &amp; weight · rest 90 s</div></div><div style="font:600 12px/1 Figtree;color:#A19C90">41 sessions</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #F1EDE3"><div style="flex:1"><div style="font:700 15px/1.2 Figtree;color:#1B1E1C">Overhead press</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Reps &amp; weight · rest 90 s</div></div><div style="font:600 12px/1 Figtree;color:#A19C90">38 sessions</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:13px 14px"><div style="flex:1"><div style="font:700 15px/1.2 Figtree;color:#1B1E1C">Plank</div><div style="font:500 12px/1.3 Figtree;color:#8A8F89;margin-top:3px">Time · rest 60 s</div></div><div style="font:600 12px/1 Figtree;color:#A19C90">12 sessions</div><div style="font:700 18px/1 Figtree;color:#C9C3B5">›</div></div>
+</div>
+</div>
+
+<nav style="display:grid;grid-template-columns:repeat(4,1fr);background:#FFFFFF;border-top:1px solid #EAE4D6;padding:10px 8px 6px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:5px;background:#8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Today</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;border:3px solid #8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Goals</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;border-radius:999px;background:#DCE8DE;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:6px;border-radius:3px;background:#3F6F52;box-shadow:0 8px 0 #3F6F52"></div></div><div style="font:800 11px/1 Figtree;color:#1B1E1C">Workouts</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div style="width:58px;height:32px;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:50% 50% 45% 45%;background:#8A8F89"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">You</div></div>
+</nav>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="1g"><div class="dv-olabel"><a class="dv-oid" href="#1g">1g</a>The kit — goal palette, states, and the shapes the placeholder icons will replace.</div>
+<div style="width:412px;background:#FFFFFF;border:1px solid #E6E1D6;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:22px">
+<div>
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px">Goal palette · 8</div>
+<div style="display:grid;grid-template-columns:repeat(8,1fr);gap:8px">
+<div style="aspect-ratio:1;border-radius:12px;background:#3F6F52"></div>
+<div style="aspect-ratio:1;border-radius:12px;background:#2F7D8C"></div>
+<div style="aspect-ratio:1;border-radius:12px;background:#4A5EC8"></div>
+<div style="aspect-ratio:1;border-radius:12px;background:#7E5BA6"></div>
+<div style="aspect-ratio:1;border-radius:12px;background:#C25B77"></div>
+<div style="aspect-ratio:1;border-radius:12px;background:#C2643A"></div>
+<div style="aspect-ratio:1;border-radius:12px;background:#C79A2E"></div>
+<div style="aspect-ratio:1;border-radius:12px;background:#7A7468"></div>
+</div>
+<div style="font:500 12px/1.5 Figtree;color:#6E7671;margin-top:10px">Sage is the default when no colour is chosen. No red in the set — there is no state that needs one.</div>
+</div>
+
+<div>
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px">Day states</div>
+<div style="display:flex;gap:18px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:40px;height:40px;border-radius:50%;background:#3F6F52"></div><div style="font:600 11px/1 Figtree;color:#6E7671">Done</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:40px;height:40px;border-radius:50%;background:#F1EDE3;display:flex;align-items:center;justify-content:center"><div style="width:15px;height:3px;border-radius:2px;background:#B9B3A5"></div></div><div style="font:600 11px/1 Figtree;color:#6E7671">Skipped</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:40px;height:40px;border-radius:50%;border:3px solid #DED7C7;box-sizing:border-box"></div><div style="font:600 11px/1 Figtree;color:#6E7671">Open</div></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:40px;height:40px;border-radius:50%;background:#F7F4ED;border:1px solid #EFEADF;box-sizing:border-box"></div><div style="font:600 11px/1 Figtree;color:#6E7671">Blank</div></div>
+</div>
+</div>
+
+<div>
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px">Icon slots · placeholders</div>
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
+<div style="aspect-ratio:1;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;background:#B9B3A5"></div></div>
+<div style="aspect-ratio:1;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;border:4px solid #B9B3A5;box-sizing:border-box"></div></div>
+<div style="aspect-ratio:1;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:18px;height:18px;border-radius:4px;background:#B9B3A5"></div></div>
+<div style="aspect-ratio:1;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:16px;height:16px;border-radius:3px;background:#B9B3A5;transform:rotate(45deg)"></div></div>
+<div style="aspect-ratio:1;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:20px;height:5px;border-radius:3px;background:#B9B3A5;box-shadow:0 9px 0 #B9B3A5"></div></div>
+<div style="aspect-ratio:1;border-radius:14px;background:#F4F1E8;display:flex;align-items:center;justify-content:center"><div style="width:6px;height:20px;border-radius:3px;background:#B9B3A5;box-shadow:9px 0 0 #B9B3A5"></div></div>
+</div>
+<div style="font:500 12px/1.5 Figtree;color:#6E7671;margin-top:10px">Stand-ins for the ~30-icon set. Same 48px chip, tinted with the goal colour at 12%.</div>
+</div>
+
+<div>
+<div style="font:800 11px/1 Figtree;color:#8A8F89;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px">Type</div>
+<div style="font:900 30px/1.1 Figtree;color:#1B1E1C;letter-spacing:-.02em">Figtree 900 · 28–30</div>
+<div style="font:800 18px/1.2 Figtree;color:#1B1E1C;margin-top:8px">Figtree 800 · 18 card titles</div>
+<div style="font:500 13px/1.4 Figtree;color:#6E7671;margin-top:6px">Figtree 500 · 13 meta and kind copy</div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: “take <a class="dv-oid" href="#1b">1b</a>’s grouping but <a class="dv-oid" href="#1a">1a</a>’s card size” · “show the goal calendar history and create-goal screens” · “make the live session <a class="dv-oid" href="#1d">1d</a> tappable end to end”</p>
+</section>
+
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,94 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "A Warm Journal · Today",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "WarmGoals.dc.html",
+      "title": "A Warm Journal · Goals",
+      "x": 480,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "WarmSession.dc.html",
+      "title": "A Warm Journal · Live session",
+      "x": 960,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "WarmHistory.dc.html",
+      "title": "A Warm Journal · Goal history",
+      "x": 1440,
+      "y": 0,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "InkToday.dc.html",
+      "title": "B Ink & Signal · Today",
+      "x": 0,
+      "y": 1014,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "InkGoals.dc.html",
+      "title": "B Ink & Signal · Goals",
+      "x": 480,
+      "y": 1014,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "InkSession.dc.html",
+      "title": "B Ink & Signal · Live session",
+      "x": 960,
+      "y": 1014,
+      "w": 390,
+      "h": 844
+    },
+    {
+      "file": "InkHistory.dc.html",
+      "title": "B Ink & Signal · Goal history",
+      "x": 1440,
+      "y": 1014,
+      "w": 390,
+      "h": 844
+    }
+  ],
+  "annotations": [
+    {
+      "id": "dir-a",
+      "x": -420,
+      "y": 0,
+      "w": 340,
+      "text": "A · Warm Journal\n\nPaper-toned background, Instrument Serif headings, soft rounded cards, muted 8-colour palette. Reads like a notebook: calm and kind, which fits \"never shames\".\n\nTradeoff: lower contrast and a gentler hierarchy; the live workout screen has less punch mid-set."
+    },
+    {
+      "id": "dir-b",
+      "x": -420,
+      "y": 1014,
+      "w": 340,
+      "text": "B · Ink & Signal\n\nCool near-white ground, near-black ink, Archivo headings, JetBrains Mono for every number, 6px corners, saturated colour chips. A done card inverts to ink. Reads like a tool: fast to scan one-handed at the gym.\n\nTradeoff: the bold, uppercase voice can feel stern; needs care so it stays light rather than drill-sergeant."
+    },
+    {
+      "id": "shared",
+      "x": -420,
+      "y": 460,
+      "w": 340,
+      "text": "Both directions pass the no-shame rules: counts of done only, skipped days as a neutral dash, undone days blank, no red, no streaks, no percentages.\n\nStatic mockups. Sample goal names and numbers are placeholders."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}
