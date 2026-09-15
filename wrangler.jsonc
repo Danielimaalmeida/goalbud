@@ -1,0 +1,10 @@
+// Cloudflare Workers static-assets deploy (dashboard "Workers & Pages" import flow).
+// Build with `npm run build`, deploy with `npx wrangler deploy`.
+{
+  "name": "goalbud",
+  "compatibility_date": "2026-09-15",
+  "assets": {
+    "directory": "./dist/goalbud/browser",
+    "not_found_handling": "single-page-application"
+  }
+}
