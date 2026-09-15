@@ -16,7 +16,7 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://localhost:4200"
-additional_redirect_urls = ["http://localhost:4200/today"]
+additional_redirect_urls = ["http://localhost:4200/today", "https://goalbud.daniel-almeida-rambo.workers.dev/today"]
 
 [auth.email]
 enable_signup = true

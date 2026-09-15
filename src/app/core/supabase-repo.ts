@@ -97,7 +97,10 @@ export class SupabaseAuth implements AuthProvider {
     if (error) throw new Error(error.message);
   }
   async signUp(email: string, password: string, displayName: string) {
-    const { error } = await this.db.auth.signUp({ email, password, options: { data: { display_name: displayName } } });
+    const { error } = await this.db.auth.signUp({
+      email, password,
+      options: { data: { display_name: displayName }, emailRedirectTo: location.origin + '/today' },
+    });
     if (error) throw new Error(error.message);
   }
   async signInWithGoogle() {

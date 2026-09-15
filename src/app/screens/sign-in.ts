@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AUTH } from '../core/auth';
 
@@ -70,6 +70,13 @@ export class SignInScreen {
   readonly password = signal('');
   readonly error = signal<string | null>(null);
   readonly busy = signal(false);
+
+  constructor() {
+    // Coming back from a confirmation email or Google, the session lands a moment after the page. Move on when it does.
+    effect(() => {
+      if (this.auth.user()) void this.router.navigate(['/today'], { replaceUrl: true });
+    });
+  }
 
   v(e: Event): string {
     return (e.target as HTMLInputElement).value;
