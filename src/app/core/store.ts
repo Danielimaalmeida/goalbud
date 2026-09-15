@@ -75,7 +75,8 @@ export class AppStore {
       this.loadedFor = uid;
       await this.rollDay();
     } catch (e) {
-      this.loadError.set(e instanceof OfflineError ? e.message : "Couldn't load your goals. Try again.");
+      const detail = e instanceof Error ? e.message : String(e);
+      this.loadError.set(e instanceof OfflineError ? "You're offline. Try again when you're back." : `Couldn't load your goals. ${detail}`);
     }
   }
 

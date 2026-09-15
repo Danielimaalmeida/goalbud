@@ -10,10 +10,10 @@ export const SUPABASE = new InjectionToken<SupabaseClient>('Supabase', {
   factory: () => createClient(environment.supabaseUrl, environment.supabaseAnonKey),
 });
 
-function fail(error: { message: string } | null): void {
+function fail(error: { message: string; code?: string; details?: string | null } | null, what = ''): void {
   if (!error) return;
-  if (!navigator.onLine || /fetch/i.test(error.message)) throw new OfflineError();
-  throw new Error(error.message);
+  if (!navigator.onLine || /failed to fetch|networkerror|load failed/i.test(error.message)) throw new OfflineError();
+  throw new Error(`${what ? what + ': ' : ''}${error.message}${error.code ? ` (${error.code})` : ''}`);
 }
 
 /* Row ↔ model mapping. Rows are snake_case; nested lists live in jsonb. */
@@ -61,7 +61,8 @@ export class SupabaseRepo implements Repo {
       this.db.from('workouts').select('*').eq('user_id', userId).order('name'),
       this.db.from('sessions').select('*').eq('user_id', userId).order('started_at', { ascending: false }),
     ]);
-    for (const r of [profile, goals, entries, exercises, workouts, sessions]) fail(r.error);
+    const named = { profile, goals, entries, exercises, workouts, sessions };
+    for (const [what, r] of Object.entries(named)) fail(r.error, what);
     const u = this.auth.user();
     return {
       profile: toProfile(profile.data, { email: u?.email ?? '', displayName: u?.displayName ?? '' }),
