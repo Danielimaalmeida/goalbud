@@ -48,7 +48,11 @@
   --dark-ink-2: #6E756F;
   --mint: #8FD3A6;
 
-  /* Goal palette (8). No red: there is no state that needs one. */
+  /* Destructive. The only red in the system: it marks a permanent delete and nothing else. */
+  --danger: #B4475F;
+  --danger-tint: #F7E9EC;
+
+  /* Goal palette (8). No red: a goal is never a warning. */
   --goal-sage: #3F6F52;
   --goal-teal: #2F7D8C;
   --goal-blue: #4A5EC8;
@@ -200,6 +204,7 @@ app-root { display: block; min-height: 100dvh; }
 .row .chev { font: 700 18px/1 var(--font); color: var(--ink-7); }
 .row-action { font: 700 15px/1.2 var(--font); color: var(--ink); }
 .row-action.is-quiet { color: var(--ink-3); }
+.row-action.is-danger { color: var(--danger); }
 
 /* Colour dot */
 .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--goal, var(--sage)); flex: none; }
@@ -229,6 +234,8 @@ app-root { display: block; min-height: 100dvh; }
 .btn.is-mint { background: var(--mint); color: var(--dark); }
 .btn.is-ghost { background: none; color: var(--ink-3); font-weight: 700; }
 .btn.is-goal { background: var(--goal, var(--sage)); color: #fff; }
+.btn.is-danger { background: var(--danger); color: #fff; }
+.btn.is-soft-danger { background: var(--danger-tint); color: var(--danger); font-size: 12px; padding: 10px 13px; }
 .btn.is-sm { padding: 11px 16px; font-size: 13px; }
 .btn:disabled { opacity: .45; }
 

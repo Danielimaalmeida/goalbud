@@ -182,6 +182,30 @@ export class AppStore {
     return this.saveGoal({ ...goal, state: 'active', archivedOn: null });
   }
 
+  /**
+   * Permanent. The goal and every day logged against it go. Goals that sat
+   * inside a long goal survive on their own: they are separate goals, and
+   * losing one shell should not take them with it.
+   */
+  deleteGoal(goal: Goal): Promise<void> {
+    const uid = this.userId;
+    const detached = this.goals().filter((g) => g.parentId === goal.id).map((g) => ({ ...g, parentId: null }));
+    return this.commit({
+      apply: () => {
+        const goals = this.goals();
+        const entries = this.entries();
+        const byId = new Map(detached.map((g) => [g.id, g]));
+        this.goals.set(goals.filter((g) => g.id !== goal.id).map((g) => byId.get(g.id) ?? g));
+        this.entries.set(entries.filter((e) => e.goalId !== goal.id));
+        return () => { this.goals.set(goals); this.entries.set(entries); };
+      },
+      persist: async () => {
+        for (const child of detached) await this.repo.upsertGoal(uid, child);
+        await this.repo.deleteGoal(uid, goal.id);
+      },
+    });
+  }
+
   /* ---------- workouts & exercises ---------- */
 
   saveExercise(exercise: Exercise): Promise<void> {
@@ -202,9 +226,53 @@ export class AppStore {
     return ex;
   }
 
+  /**
+   * Permanent. The exercise leaves the library and every workout that used it.
+   * Past sessions keep their own copy of the name, kind and sets, so history
+   * still reads correctly.
+   */
+  deleteExercise(exercise: Exercise): Promise<void> {
+    const uid = this.userId;
+    const stripped = this.workouts()
+      .filter((w) => w.exercises.some((e) => e.exerciseId === exercise.id))
+      .map((w) => ({ ...w, exercises: w.exercises.filter((e) => e.exerciseId !== exercise.id) }));
+    return this.commit({
+      apply: () => {
+        const exercises = this.exercises();
+        const workouts = this.workouts();
+        const byId = new Map(stripped.map((w) => [w.id, w]));
+        this.exercises.set(exercises.filter((e) => e.id !== exercise.id));
+        this.workouts.set(workouts.map((w) => byId.get(w.id) ?? w));
+        return () => { this.exercises.set(exercises); this.workouts.set(workouts); };
+      },
+      persist: async () => {
+        for (const w of stripped) await this.repo.upsertWorkout(uid, w);
+        await this.repo.deleteExercise(uid, exercise.id);
+      },
+    });
+  }
+
   saveWorkout(workout: Workout): Promise<void> {
     const uid = this.userId;
     return this.commit({ apply: () => this.replace(this.workouts, workout), persist: () => this.repo.upsertWorkout(uid, workout) });
+  }
+
+  /**
+   * Permanent. The template goes; sessions done from it stay, keeping their
+   * name and sets but losing the link back.
+   */
+  deleteWorkout(workout: Workout): Promise<void> {
+    const uid = this.userId;
+    return this.commit({
+      apply: () => {
+        const workouts = this.workouts();
+        const sessions = this.sessions();
+        this.workouts.set(workouts.filter((w) => w.id !== workout.id));
+        this.sessions.set(sessions.map((s) => (s.workoutId === workout.id ? { ...s, workoutId: null } : s)));
+        return () => { this.workouts.set(workouts); this.sessions.set(sessions); };
+      },
+      persist: () => this.repo.deleteWorkout(uid, workout.id),
+    });
   }
 
   session(id: string): Session | undefined {

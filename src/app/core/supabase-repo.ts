@@ -82,6 +82,19 @@ export class SupabaseRepo implements Repo {
   async updateProfile(u: string, p: Profile) {
     fail((await this.db.from('profiles').upsert({ id: u, display_name: p.displayName, email: p.email, reminder_time: p.reminderTime })).error);
   }
+
+  /* Deletes. Dependants are cleared first: the database refuses to orphan them. */
+  async deleteGoal(u: string, id: string) {
+    fail((await this.db.from('goal_entries').delete().eq('goal_id', id).eq('user_id', u)).error, 'history');
+    fail((await this.db.from('goals').delete().eq('id', id).eq('user_id', u)).error, 'goal');
+  }
+  async deleteExercise(u: string, id: string) {
+    fail((await this.db.from('exercises').delete().eq('id', id).eq('user_id', u)).error, 'exercise');
+  }
+  async deleteWorkout(u: string, id: string) {
+    fail((await this.db.from('sessions').update({ workout_id: null }).eq('workout_id', id).eq('user_id', u)).error, 'sessions');
+    fail((await this.db.from('workouts').delete().eq('id', id).eq('user_id', u)).error, 'workout');
+  }
 }
 
 @Injectable()

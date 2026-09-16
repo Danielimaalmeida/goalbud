@@ -53,6 +53,22 @@ export class LocalRepo implements Repo {
   upsertWorkout(u: string, w: Workout) { return this.save(u, (s) => upsert(s.workouts, w)); }
   upsertSession(u: string, x: Session) { return this.save(u, (s) => upsert(s.sessions, x)); }
   updateProfile(u: string, p: Profile) { return this.save(u, (s) => { s.profile = p; }); }
+
+  deleteGoal(u: string, id: string) {
+    return this.save(u, (s) => {
+      s.entries = s.entries.filter((e) => e.goalId !== id);
+      s.goals = s.goals.filter((g) => g.id !== id);
+    });
+  }
+  deleteExercise(u: string, id: string) {
+    return this.save(u, (s) => { s.exercises = s.exercises.filter((e) => e.id !== id); });
+  }
+  deleteWorkout(u: string, id: string) {
+    return this.save(u, (s) => {
+      s.sessions = s.sessions.map((x) => (x.workoutId === id ? { ...x, workoutId: null } : x));
+      s.workouts = s.workouts.filter((w) => w.id !== id);
+    });
+  }
 }
 
 function upsert<T extends { id: string }>(list: T[], item: T) {

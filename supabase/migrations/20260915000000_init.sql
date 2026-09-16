@@ -1,6 +1,7 @@
 -- Goalbud schema. Every table is per-user; RLS keyed on auth.uid().
 -- Dates are plain local dates (YYYY-MM-DD), never UTC timestamps.
--- Nothing is ever deleted: goals, exercises and workouts are archived.
+-- Archiving is the default exit for goals, exercises and workouts; a delete is
+-- permanent and the client clears dependants first (see core/store.ts).
 
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,

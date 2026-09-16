@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { newId } from '../core/ids';
 import { APP_DEFAULT_REST_SECONDS, type Exercise, type ExerciseKind, type SetTarget, type Workout } from '../core/model';
 import { AppStore } from '../core/store';
+import { workoutDeleteDetail } from '../core/deletes';
+import { ConfirmDelete } from '../ui/confirm-delete';
 
 interface Draft {
   exercise: Exercise;
@@ -14,6 +16,7 @@ interface Draft {
 @Component({
   selector: 'app-workout-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ConfirmDelete],
   template: `
     <div class="screen">
       <header class="form-head">
@@ -83,10 +86,19 @@ interface Draft {
         </section>
 
         @if (existing(); as w) {
-          <button class="card arch" (click)="archive(w)"><span class="row-action is-quiet grow">Archive workout</span><span class="aside">past sessions are kept</span><span class="chev">›</span></button>
+          <div class="ends">
+            <button class="card arch" (click)="archive(w)"><span class="row-action is-quiet grow">Archive workout</span><span class="aside">past sessions are kept</span><span class="chev">›</span></button>
+            <button class="card arch" (click)="confirming.set(true)"><span class="row-action is-danger grow">Delete workout</span><span class="aside">gone for good</span><span class="chev">›</span></button>
+          </div>
         }
       </div>
     </div>
+
+    @if (existing(); as w) {
+      @if (confirming()) {
+        <app-confirm-delete [name]="w.name" [detail]="deleteDetail(w)" (confirmed)="removeWorkout(w)" (cancelled)="confirming.set(false)" />
+      }
+    }
   `,
   styles: `
     .body { flex: 1; padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 18px; }
@@ -119,6 +131,7 @@ interface Draft {
     .addin { flex: 1; border: 0; outline: 0; background: var(--fill); border-radius: 12px; padding: 13px 14px; font: 700 15px/1 var(--font); color: var(--ink); }
     .tabs { display: flex; gap: 7px; }
     .hint { font: 500 12.5px/1.4 var(--font); color: var(--ink-4); }
+    .ends { display: flex; flex-direction: column; gap: 10px; }
     .arch { display: flex; align-items: center; gap: 12px; padding: 15px; width: 100%; border-radius: var(--r-list); }
     .arch .aside { font: 500 12.5px/1 var(--font); color: var(--ink-5); }
     .arch .chev { font: 700 18px/1 var(--font); color: var(--ink-7); }
@@ -138,6 +151,7 @@ export class WorkoutEditorScreen {
   readonly newName = signal('');
   readonly newKind = signal<ExerciseKind>('reps');
   readonly busy = signal(false);
+  readonly confirming = signal(false);
 
   readonly suggestions = computed(() => {
     const used = new Set(this.drafts().map((d) => d.exercise.id));
@@ -210,6 +224,16 @@ export class WorkoutEditorScreen {
   }
   async archive(w: Workout) {
     await this.store.saveWorkout({ ...w, archived: true });
+    void this.router.navigate(['/workouts'], { replaceUrl: true });
+  }
+
+  deleteDetail(w: Workout): string {
+    return workoutDeleteDetail(w, this.store.sessions());
+  }
+  async removeWorkout(w: Workout) {
+    this.confirming.set(false);
+    await this.store.deleteWorkout(w);
+    if (this.store.saveError()) return;
     void this.router.navigate(['/workouts'], { replaceUrl: true });
   }
 }

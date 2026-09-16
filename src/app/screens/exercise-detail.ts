@@ -1,16 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { formatShort } from '../core/dates';
+import { exerciseDeleteDetail } from '../core/deletes';
 import { pluralise } from '../core/goals';
 import { APP_DEFAULT_REST_SECONDS, type Exercise, type Session, type SessionExercise } from '../core/model';
 import { bestSet, doneSets, formatSet, isBestInSession, sessionsForExercise } from '../core/sessions';
 import { AppStore } from '../core/store';
+import { ConfirmDelete } from '../ui/confirm-delete';
 
 /** Per-exercise history: actuals per session. The chart is a promise until there is a month of data. */
 @Component({
   selector: 'app-exercise-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ConfirmDelete],
   template: `
     @if (exercise(); as ex) {
       <div class="screen">
@@ -68,9 +71,16 @@ import { AppStore } from '../core/store';
             } @else {
               <button class="row" (click)="archive(ex)"><span class="row-action is-quiet grow">Archive</span><span class="aside">history is kept</span><span class="chev">›</span></button>
             }
+            <button class="row" (click)="confirming.set(true)">
+              <span class="row-action is-danger grow">Delete</span><span class="aside">gone for good</span><span class="chev">›</span>
+            </button>
           </div>
         </div>
       </div>
+
+      @if (confirming()) {
+        <app-confirm-delete [name]="ex.name" [detail]="deleteDetail(ex)" (confirmed)="remove(ex)" (cancelled)="confirming.set(false)" />
+      }
     }
   `,
   styles: `
@@ -104,6 +114,7 @@ export class ExerciseDetailScreen {
   });
   readonly formatSet = formatSet;
   readonly pluralise = pluralise;
+  readonly confirming = signal(false);
 
   rest(ex: Exercise) { return ex.restSeconds ?? APP_DEFAULT_REST_SECONDS; }
   fmt(d: string) { return formatShort(d); }
@@ -127,6 +138,16 @@ export class ExerciseDetailScreen {
   }
   async archive(ex: Exercise) {
     await this.store.saveExercise({ ...ex, archived: true });
+    this.back();
+  }
+
+  deleteDetail(ex: Exercise): string {
+    return exerciseDeleteDetail(ex, this.store.workouts(), this.store.sessions());
+  }
+  async remove(ex: Exercise) {
+    this.confirming.set(false);
+    await this.store.deleteExercise(ex);
+    if (this.store.saveError()) return;
     this.back();
   }
   back() { history.length > 1 ? this.location.back() : void this.router.navigate(['/workouts']); }

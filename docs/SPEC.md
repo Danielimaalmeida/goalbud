@@ -31,8 +31,13 @@ These are hard rules, not tone guidance. Every screen must pass them.
   exactly like days before the goal existed.
 - **Edits** to a target or schedule apply from the current week forward. Past
   weeks keep the target they had.
-- **Nothing is deleted.** Goals, exercises, and workouts are archived. History
-  and session links survive.
+- **Archive is the default exit.** Goals, exercises, and workouts are archived,
+  not deleted: history and session links survive, and they can come back.
+- **Delete is permanent and explicit.** It sits behind a confirmation that
+  names what goes and what stays. Deleting a goal takes its logged days with
+  it; goals inside a deleted long goal survive on their own. Deleting an
+  exercise or a workout never rewrites a past session, which keeps its own
+  snapshot of names and sets.
 - **Notifications** list what is open today, never what was missed.
 - A workout session that was left open still counts. It is never labelled
   incomplete.
@@ -83,7 +88,8 @@ A container with a target date ("finish the painting by October").
   reused. No preset library shipped with the app.
 - Exercise kind: **reps + weight** or **time-based** (duration).
 - Optional default rest time (app default 90 s).
-- Archived, never deleted.
+- Archived by default. Deleting one removes it from every workout template and
+  leaves past sessions untouched.
 
 ### 4.2 Workout (template)
 - A named list of exercises, each with N sets. For reps exercises a set has

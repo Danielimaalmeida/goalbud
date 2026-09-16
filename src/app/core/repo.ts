@@ -14,6 +14,15 @@ export interface Repo {
   upsertWorkout(userId: string, workout: Workout): Promise<void>;
   upsertSession(userId: string, session: Session): Promise<void>;
   updateProfile(userId: string, profile: Profile): Promise<void>;
+
+  /**
+   * Permanent deletes. Each one also clears what the database would otherwise
+   * refuse to orphan; the store detaches the rest before calling these, so
+   * they are safe to retry.
+   */
+  deleteGoal(userId: string, goalId: string): Promise<void>;
+  deleteExercise(userId: string, exerciseId: string): Promise<void>;
+  deleteWorkout(userId: string, workoutId: string): Promise<void>;
 }
 
 export const REPO = new InjectionToken<Repo>('GoalbudRepo');

@@ -1,22 +1,29 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { formatDayMonth } from '../core/dates';
+import { exerciseDeleteDetail, goalDeleteDetail, workoutDeleteDetail } from '../core/deletes';
 import { describeSchedule, pluralise, totalDone } from '../core/goals';
-import type { Goal } from '../core/model';
+import type { Exercise, Goal, Workout } from '../core/model';
 import { AppStore } from '../core/store';
+import { ConfirmDelete } from '../ui/confirm-delete';
 import { goalVar } from '../ui/goal-colour';
 
-/** Nothing is deleted. Archived goals, exercises and workouts live here and can come back. */
+type Pending =
+  | { kind: 'goal'; item: Goal }
+  | { kind: 'exercise'; item: Exercise }
+  | { kind: 'workout'; item: Workout };
+
+/** Archived goals, exercises and workouts. They can come back, or go for good. */
 @Component({
   selector: 'app-archive',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, ConfirmDelete],
   template: `
     <div class="screen">
       <header class="detail-head">
         <button class="back" (click)="back()" aria-label="Back">‹</button>
-        <div class="grow"><div class="title">Archive</div><div class="sub">History and session links are kept</div></div>
+        <div class="grow"><div class="title">Archive</div><div class="sub">Restore keeps the history. Delete does not.</div></div>
       </header>
       <div class="screen-body">
         @if (goals().length) {
@@ -27,6 +34,7 @@ import { goalVar } from '../ui/goal-colour';
                 <span class="dot is-muted"></span>
                 <a class="grow" [routerLink]="['/goals', g.id]"><span class="name is-muted">{{ g.name }}</span><span class="meta is-muted">{{ meta(g) }}</span></a>
                 <button class="btn is-soft-sage" (click)="store.restoreGoal(g)">Restore</button>
+                <button class="btn is-soft-danger" (click)="ask({ kind: 'goal', item: g })">Delete</button>
               </div>
             }
           </div>
@@ -38,6 +46,7 @@ import { goalVar } from '../ui/goal-colour';
               <div class="row">
                 <a class="grow" [routerLink]="['/exercises', e.id]"><span class="name is-muted">{{ e.name }}</span></a>
                 <button class="btn is-soft-sage" (click)="store.saveExercise({ ...e, archived: false })">Restore</button>
+                <button class="btn is-soft-danger" (click)="ask({ kind: 'exercise', item: e })">Delete</button>
               </div>
             }
           </div>
@@ -49,6 +58,7 @@ import { goalVar } from '../ui/goal-colour';
               <div class="row">
                 <span class="grow"><span class="name is-muted">{{ w.name }}</span><span class="meta is-muted">{{ pluralise(w.exercises.length, 'exercise') }}</span></span>
                 <button class="btn is-soft-sage" (click)="store.saveWorkout({ ...w, archived: false })">Restore</button>
+                <button class="btn is-soft-danger" (click)="ask({ kind: 'workout', item: w })">Delete</button>
               </div>
             }
           </div>
@@ -58,6 +68,10 @@ import { goalVar } from '../ui/goal-colour';
         }
       </div>
     </div>
+
+    @if (pending(); as p) {
+      <app-confirm-delete [name]="p.item.name" [detail]="detail(p)" (confirmed)="remove(p)" (cancelled)="pending.set(null)" />
+    }
   `,
   styles: `
     .grow { flex: 1; min-width: 0; }
@@ -72,6 +86,25 @@ export class ArchiveScreen {
   readonly goals = computed(() => this.store.goals().filter((g) => g.state === 'archived'));
   readonly exercises = computed(() => this.store.exercises().filter((e) => e.archived));
   readonly workouts = computed(() => this.store.workouts().filter((w) => w.archived));
+
+  readonly pending = signal<Pending | null>(null);
+
+  ask(p: Pending) { this.pending.set(p); }
+  detail(p: Pending): string {
+    switch (p.kind) {
+      case 'goal': return goalDeleteDetail(p.item, this.store.goals(), this.store.entries());
+      case 'exercise': return exerciseDeleteDetail(p.item, this.store.workouts(), this.store.sessions());
+      case 'workout': return workoutDeleteDetail(p.item, this.store.sessions());
+    }
+  }
+  remove(p: Pending) {
+    this.pending.set(null);
+    switch (p.kind) {
+      case 'goal': return this.store.deleteGoal(p.item);
+      case 'exercise': return this.store.deleteExercise(p.item);
+      case 'workout': return this.store.deleteWorkout(p.item);
+    }
+  }
 
   colour(g: Goal) { return goalVar(g); }
   meta(g: Goal): string {

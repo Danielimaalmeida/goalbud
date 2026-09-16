@@ -2,9 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { Location } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { addMonths, daysInMonth, formatDayMonth, formatMonthYear, weekday, yearMonth, ymToDate } from '../core/dates';
+import { goalDeleteDetail } from '../core/deletes';
 import { childCompletions, dayState, describeSchedule, doneInMonth, existsOn, pluralise, totalDone, type DayState } from '../core/goals';
 import type { Goal } from '../core/model';
 import { AppStore } from '../core/store';
+import { ConfirmDelete } from '../ui/confirm-delete';
 import { goalVar } from '../ui/goal-colour';
 
 interface Cell {
@@ -15,11 +17,11 @@ interface Cell {
   tappable: boolean;
 }
 
-/** Per-goal history: month calendar, one count, and the edit/pause/archive actions. */
+/** Per-goal history: month calendar, one count, and the edit/pause/archive/delete actions. */
 @Component({
   selector: 'app-goal-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
+  imports: [RouterLink, ConfirmDelete],
   template: `
     @if (goal(); as g) {
       <div class="screen" [style.--goal]="colour(g)">
@@ -110,9 +112,16 @@ interface Cell {
                 <span class="row-action grow">Restore</span><span class="aside">back to active</span><span class="chev">›</span>
               </button>
             }
+            <button class="row" (click)="confirming.set(true)">
+              <span class="row-action is-danger grow">Delete</span><span class="aside">gone for good</span><span class="chev">›</span>
+            </button>
           </div>
         </div>
       </div>
+
+      @if (confirming()) {
+        <app-confirm-delete [name]="g.name" [detail]="deleteDetail(g)" (confirmed)="remove(g)" (cancelled)="confirming.set(false)" />
+      }
     }
   `,
   styles: `
@@ -151,6 +160,7 @@ export class GoalDetailScreen {
   readonly goal = computed(() => this.store.goal(this.id()) ?? null);
   readonly describe = (g: Goal) => describeSchedule(g);
 
+  readonly confirming = signal(false);
   readonly view = signal(yearMonth(this.store.today()));
   readonly monthLabel = computed(() => formatMonthYear(this.view().year, this.view().month));
   readonly canForward = computed(() => {
@@ -203,6 +213,16 @@ export class GoalDetailScreen {
   }
   async archive(g: Goal) {
     await this.store.archiveGoal(g);
+    void this.router.navigate(['/goals']);
+  }
+
+  deleteDetail(g: Goal): string {
+    return goalDeleteDetail(g, this.store.goals(), this.store.entries());
+  }
+  async remove(g: Goal) {
+    this.confirming.set(false);
+    await this.store.deleteGoal(g);
+    if (this.store.saveError()) return;
     void this.router.navigate(['/goals']);
   }
   pluralise = pluralise;
