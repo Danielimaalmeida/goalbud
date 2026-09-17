@@ -4,6 +4,7 @@
   "name": "goalbud",
   "compatibility_date": "2026-09-15",
   "workers_dev": true,
+  "routes": [{ "pattern": "goalbud.fyi", "custom_domain": true }],
   "preview_urls": true,
   "assets": {
     "directory": "./dist/goalbud/browser",
