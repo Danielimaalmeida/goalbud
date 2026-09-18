@@ -29,6 +29,13 @@ export function existsOn(goal: Goal, date: LocalDate): boolean {
   return !isPausedOn(goal, date);
 }
 
+/** Exercise goals a workout session on `date` could count for: active, not paused, already created. */
+export function exerciseGoalsOn(goals: Goal[], date: LocalDate): Goal[] {
+  return goals
+    .filter((g) => g.isExercise && g.state === 'active' && !isPausedOn(g, date) && g.createdOn <= date)
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.createdOn.localeCompare(b.createdOn));
+}
+
 export function recurrenceDue(rec: Recurrence, date: LocalDate): boolean {
   switch (rec.kind) {
     case 'daily':

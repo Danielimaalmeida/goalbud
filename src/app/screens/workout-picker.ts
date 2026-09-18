@@ -65,11 +65,16 @@ export class WorkoutPicker {
     const d = last === this.store.today() ? 'today' : last === this.store.yesterday() ? 'yesterday' : formatShort(last).slice(0, 3);
     return `${n} · last done ${d}`;
   }
+  /** Started from a goal, the session counts for that goal and nothing else. */
   async start(w: Workout | null) {
-    const s = await this.store.startSession(w, buildSessionExercises(w, this.store.exercises()));
+    const s = await this.store.startSession(w, buildSessionExercises(w, this.store.exercises()), this.goal()?.id ?? null);
     this.go(s.id);
   }
-  go(id: string) {
+  /** Resuming an open session from a goal points it at that goal, unless it already has one. */
+  async go(id: string) {
+    const g = this.goal();
+    const open = this.store.session(id);
+    if (g && open && open.goalId === null) await this.store.linkSession(id, g.id);
     this.close.emit();
     void this.router.navigate(['/session', id]);
   }

@@ -117,8 +117,12 @@ A container with a target date ("finish the painting by October").
 - Returning to an open session (phone locked, app closed) asks: still going,
   or finished?
 - An open session is closed as-is at midnight with whatever was done.
-- A completed or auto-closed session ticks every active exercise-flagged goal
-  for that day, once. Two sessions in one day still yield one tick.
+- A session counts for **one** exercise-flagged goal, not all of them. Started
+  from a goal on Today, it counts for that goal. Started from the Workouts
+  tab, Finish asks which goal it counts for (or none). Closing it ticks that
+  goal for the day, once: two sessions in one day still yield one tick.
+- A session auto-closed at midnight with no goal counts for the only exercise
+  goal there is; with several it counts for none, since there is no way to know.
 
 ## 5. History
 

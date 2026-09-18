@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { formatElapsed } from '../core/dates';
-import { pluralise } from '../core/goals';
-import type { Exercise, ExerciseKind, Session, SessionExercise, SessionSet } from '../core/model';
+import { describeSchedule, exerciseGoalsOn, pluralise } from '../core/goals';
+import type { Exercise, ExerciseKind, Goal, Session, SessionExercise, SessionSet } from '../core/model';
 import { allSetsDone, currentExercise, doneSets, emptySet, formatSet, formatTarget, isExerciseDone, nextExercise, nextOpenSet, sessionProgress, snapshotExercise } from '../core/sessions';
 import { AppStore } from '../core/store';
+import { goalVar } from '../ui/goal-colour';
 import { ExercisePicker } from '../ui/exercise-picker';
+import { Sheet } from '../ui/sheet';
 
 /**
  * Live session, full-list layout. Every set saves immediately. Rest timer
@@ -15,7 +17,7 @@ import { ExercisePicker } from '../ui/exercise-picker';
 @Component({
   selector: 'app-session',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ExercisePicker],
+  imports: [ExercisePicker, Sheet],
   template: `
     @if (session(); as s) {
       <div class="screen">
@@ -31,7 +33,7 @@ import { ExercisePicker } from '../ui/exercise-picker';
 
         <div class="list-body" [class.has-rest]="resting()">
           @if (s.endedAt) {
-            <div class="card quiet">This session is closed. {{ s.closedBy === 'midnight' ? 'It was left open and closed at midnight. It counted.' : 'It counted.' }}</div>
+            <div class="card quiet">This session is closed. {{ s.closedBy === 'midnight' ? 'It was left open and closed at midnight.' : '' }} {{ linkedGoal() ? 'It counted for ' + linkedGoal()!.name + '.' : 'It counted for no goal.' }}</div>
           }
           @for (ex of s.exercises; track $index; let i = $index) {
             @if (isDone(ex)) {
@@ -119,6 +121,24 @@ import { ExercisePicker } from '../ui/exercise-picker';
       @if (picking()) {
         <app-exercise-picker [exclude]="usedIds()" (pick)="addExisting($event)" (close)="picking.set(false)" />
       }
+      @if (linking()) {
+        <app-sheet (close)="linking.set(false)">
+          <div class="title">Which goal does this count for?</div>
+          <div class="sub">Finishing {{ s.workoutName }}. Only the goal you pick gets ticked.</div>
+          <div class="opts">
+            @for (g of candidates(); track g.id) {
+              <button class="option" [style.--goal]="colour(g)" (click)="finishWith(g.id)">
+                <span class="dot"></span>
+                <span class="grow"><div class="name">{{ g.name }}</div><div class="meta">{{ describe(g) }}</div></span>
+                <span class="chev">›</span>
+              </button>
+            }
+            <button class="option" (click)="finishWith(null)">
+              <span class="grow"><div class="name">None of them</div><div class="meta">Just close the session</div></span><span class="chev">›</span>
+            </button>
+          </div>
+        </app-sheet>
+      }
     }
   `,
   styles: `
@@ -173,6 +193,7 @@ import { ExercisePicker } from '../ui/exercise-picker';
     .bar { height: 8px; border-radius: 4px; background: var(--dark-3); overflow: hidden; }
     .bar i { display: block; height: 100%; background: var(--mint); border-radius: 4px; transition: width 1s linear; }
     .skip { font: 800 13px/1 var(--font); color: #fff; border: 2px solid var(--dark-4); border-radius: 999px; padding: 11px 15px; }
+    .opts { display: flex; flex-direction: column; gap: 10px; }
   `,
 })
 export class SessionScreen {
@@ -186,6 +207,15 @@ export class SessionScreen {
   readonly current = computed(() => this.session() ? currentExercise(this.session()!, this.focus()) : -1);
   readonly upNext = computed(() => this.session() ? nextExercise(this.session()!, this.current()) : -1);
   readonly picking = signal(false);
+  /** The "which goal?" sheet, shown on Finish when the session was not started from a goal. */
+  readonly linking = signal(false);
+  readonly candidates = computed(() => this.session() ? exerciseGoalsOn(this.store.goals(), this.session()!.date) : []);
+  readonly linkedGoal = computed(() => {
+    const id = this.session()?.goalId;
+    return id ? this.store.goal(id) ?? null : null;
+  });
+  readonly colour = goalVar;
+  readonly describe = describeSchedule;
   readonly usedIds = computed(() => this.session()?.exercises.map((e) => e.exerciseId) ?? []);
   readonly available = computed(() => {
     const used = new Set(this.usedIds());
@@ -296,8 +326,16 @@ export class SessionScreen {
     return this.update((x) => { x.exercises.push(snap); return x; });
   }
   skipRest() { this.restEnd.set(null); }
-  async finish() {
-    await this.store.finishSession(this.id(), 'user');
+  /** Started from a goal: close and tick it. Otherwise ask which goal, if there is any to pick. */
+  finish() {
+    const s = this.session();
+    if (!s) return Promise.resolve();
+    if (s.goalId === null && this.candidates().length) { this.linking.set(true); return Promise.resolve(); }
+    return this.finishWith(s.goalId);
+  }
+  async finishWith(goalId: string | null) {
+    this.linking.set(false);
+    await this.store.finishSession(this.id(), 'user', goalId);
     if (!this.store.saveError()) this.leave();
   }
   leave() { void this.router.navigate(['/today']); }

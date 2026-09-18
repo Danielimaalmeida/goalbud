@@ -147,6 +147,11 @@ export interface Session {
   id: string;
   workoutId: string | null;
   workoutName: string;
+  /**
+   * The exercise goal this session counts for, if any. Set when started from
+   * a goal on Today, or chosen on Finish. Only this goal is ticked.
+   */
+  goalId: string | null;
   date: LocalDate;
   startedAt: string;
   endedAt: string | null;

@@ -41,11 +41,11 @@ const fromExercise = (userId: string, e: Exercise) => ({
 const toWorkout = (r: any): Workout => ({ id: r.id, name: r.name, restSeconds: r.rest_seconds, exercises: r.exercises ?? [], archived: r.archived });
 const fromWorkout = (userId: string, w: Workout) => ({ id: w.id, user_id: userId, name: w.name, rest_seconds: w.restSeconds, exercises: w.exercises, archived: w.archived });
 const toSession = (r: any): Session => ({
-  id: r.id, workoutId: r.workout_id, workoutName: r.workout_name, date: r.date, startedAt: r.started_at,
+  id: r.id, workoutId: r.workout_id, workoutName: r.workout_name, goalId: r.goal_id ?? null, date: r.date, startedAt: r.started_at,
   endedAt: r.ended_at, closedBy: r.closed_by, exercises: r.exercises ?? [],
 });
 const fromSession = (userId: string, s: Session) => ({
-  id: s.id, user_id: userId, workout_id: s.workoutId, workout_name: s.workoutName, date: s.date,
+  id: s.id, user_id: userId, workout_id: s.workoutId, workout_name: s.workoutName, goal_id: s.goalId, date: s.date,
   started_at: s.startedAt, ended_at: s.endedAt, closed_by: s.closedBy, exercises: s.exercises,
 });
 const toProfile = (r: any, fallback: { email: string; displayName: string }): Profile => ({

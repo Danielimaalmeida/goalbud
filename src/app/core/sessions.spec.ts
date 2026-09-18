@@ -10,7 +10,7 @@ function session(...exercises: string[]): Session {
   const list: SessionExercise[] = exercises.map((sets, i) => ({
     exerciseId: `e${i}`, name: `e${i}`, kind: 'reps', restSeconds: 90, sets: [...sets].map((c) => set(c === 'x')),
   }));
-  return { id: 's', workoutId: null, workoutName: 'Freestyle', date: '2026-09-18', startedAt: '2026-09-18T18:00:00.000Z', endedAt: null, closedBy: null, exercises: list };
+  return { id: 's', workoutId: null, workoutName: 'Freestyle', goalId: null, date: '2026-09-18', startedAt: '2026-09-18T18:00:00.000Z', endedAt: null, closedBy: null, exercises: list };
 }
 
 describe('currentExercise', () => {

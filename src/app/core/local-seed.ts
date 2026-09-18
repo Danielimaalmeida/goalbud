@@ -120,7 +120,7 @@ export function seedSnapshot(userId: string, email: string, displayName: string)
     if (i % 12 === 0) benchWeight += 2.5;
     const midnight = i === 6;
     sessions.push({
-      id: `s-${date}`, workoutId: 'wo-push', workoutName: 'Push day', date,
+      id: `s-${date}`, workoutId: 'wo-push', workoutName: 'Push day', goalId: 'push', date,
       startedAt: at(date, 18, 5), endedAt: midnight ? at(date, 23, 59) : at(date, 18, 52),
       closedBy: midnight ? 'midnight' : 'user',
       exercises: [

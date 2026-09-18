@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { AUTH } from './auth';
 import { addDays, msUntilMidnight, todayLocal } from './dates';
-import { entryFor, isPausedOn } from './goals';
+import { entryFor, exerciseGoalsOn } from './goals';
 import { newId } from './ids';
 import type { Exercise, Goal, GoalEntry, LocalDate, Profile, Session, Workout } from './model';
 import { OfflineError, REPO } from './repo';
@@ -185,7 +185,8 @@ export class AppStore {
   /**
    * Permanent. The goal and every day logged against it go. Goals that sat
    * inside a long goal survive on their own: they are separate goals, and
-   * losing one shell should not take them with it.
+   * losing one shell should not take them with it. Sessions that counted for
+   * it stay, and just lose the link.
    */
   deleteGoal(goal: Goal): Promise<void> {
     const uid = this.userId;
@@ -194,10 +195,12 @@ export class AppStore {
       apply: () => {
         const goals = this.goals();
         const entries = this.entries();
+        const sessions = this.sessions();
         const byId = new Map(detached.map((g) => [g.id, g]));
         this.goals.set(goals.filter((g) => g.id !== goal.id).map((g) => byId.get(g.id) ?? g));
         this.entries.set(entries.filter((e) => e.goalId !== goal.id));
-        return () => { this.goals.set(goals); this.entries.set(entries); };
+        this.sessions.set(sessions.map((s) => (s.goalId === goal.id ? { ...s, goalId: null } : s)));
+        return () => { this.goals.set(goals); this.entries.set(entries); this.sessions.set(sessions); };
       },
       persist: async () => {
         for (const child of detached) await this.repo.upsertGoal(uid, child);
@@ -285,34 +288,49 @@ export class AppStore {
     return this.commit({ apply: () => this.replace(this.sessions, session), persist: () => this.repo.upsertSession(uid, session) });
   }
 
-  async startSession(workout: Workout | null, exercises: Session['exercises']): Promise<Session> {
+  /** `goalId` is the exercise goal the session counts for, when it was started from one. */
+  async startSession(workout: Workout | null, exercises: Session['exercises'], goalId: string | null = null): Promise<Session> {
     const now = new Date();
     const session: Session = {
-      id: newId(), workoutId: workout?.id ?? null, workoutName: workout?.name ?? 'Freestyle',
+      id: newId(), workoutId: workout?.id ?? null, workoutName: workout?.name ?? 'Freestyle', goalId,
       date: todayLocal(now), startedAt: now.toISOString(), endedAt: null, closedBy: null, exercises,
     };
     await this.saveSession(session);
     return session;
   }
 
+  /** Point an open session at a goal, e.g. when it is resumed from that goal on Today. */
+  linkSession(id: string, goalId: string): Promise<void> {
+    const s = this.session(id);
+    if (!s || s.goalId === goalId) return Promise.resolve();
+    return this.saveSession({ ...s, goalId });
+  }
+
   /**
-   * Close a session as-is. A completed or auto-closed session ticks every
-   * active exercise-flagged goal for its day, once.
+   * Close a session as-is. It ticks the one goal it counts for: the goal it
+   * was started from, or the one passed in here (chosen on Finish). A session
+   * closed at midnight with no goal counts for the only exercise goal there
+   * is; with several there is no way to know which, so none is ticked.
    */
-  async finishSession(id: string, closedBy: Session['closedBy'] = 'user'): Promise<void> {
+  async finishSession(id: string, closedBy: Session['closedBy'] = 'user', goalId?: string | null): Promise<void> {
     const s = this.session(id);
     if (!s || s.endedAt) return;
     const endedAt = closedBy === 'midnight' ? new Date(`${s.date}T23:59:59`).toISOString() : new Date().toISOString();
-    await this.saveSession({ ...s, endedAt, closedBy });
-    await this.tickExerciseGoals(s.date);
+    let linked = goalId === undefined ? s.goalId : goalId;
+    if (linked === null && closedBy === 'midnight') {
+      const candidates = exerciseGoalsOn(this.goals(), s.date);
+      if (candidates.length === 1) linked = candidates[0].id;
+    }
+    await this.saveSession({ ...s, endedAt, closedBy, goalId: linked });
+    if (linked) await this.tickGoal(linked, s.date);
   }
 
-  async tickExerciseGoals(date: LocalDate): Promise<void> {
-    for (const g of this.goals()) {
-      if (!g.isExercise || g.state !== 'active' || isPausedOn(g, date) || g.createdOn > date) continue;
-      if (entryFor(this.entries(), g.id, date)?.kind === 'done') continue;
-      await this.setDone(g.id, date, true);
-    }
+  /** Tick a goal for a day, once: a second session on the same day changes nothing. */
+  async tickGoal(goalId: string, date: LocalDate): Promise<void> {
+    const g = this.goal(goalId);
+    if (!g || !exerciseGoalsOn([g], date).length) return;
+    if (entryFor(this.entries(), g.id, date)?.kind === 'done') return;
+    await this.setDone(g.id, date, true);
   }
 
   /* ---------- profile ---------- */

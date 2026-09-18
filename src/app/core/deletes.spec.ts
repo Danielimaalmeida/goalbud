@@ -1,6 +1,7 @@
 import { Injector, signal } from '@angular/core';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { AUTH, type AuthProvider } from './auth';
+import { todayLocal } from './dates';
 import { exerciseDeleteDetail, goalDeleteDetail, workoutDeleteDetail } from './deletes';
 import type { Exercise, Goal, GoalEntry, Profile, Session, Snapshot, Workout } from './model';
 import { REPO, type Repo } from './repo';
@@ -30,7 +31,7 @@ function workout(id: string, exerciseIds: string[]): Workout {
 }
 function session(id: string, workoutId: string | null, exerciseIds: string[]): Session {
   return {
-    id, workoutId, workoutName: workoutId ?? 'Freestyle', date: '2026-09-15',
+    id, workoutId, workoutName: workoutId ?? 'Freestyle', goalId: null, date: '2026-09-15',
     startedAt: '2026-09-15T18:00:00.000Z', endedAt: '2026-09-15T19:00:00.000Z', closedBy: 'user',
     exercises: exerciseIds.map((e) => ({
       exerciseId: e, name: e, kind: 'reps' as const, restSeconds: 90,
@@ -221,5 +222,57 @@ describe('what the confirmation says', () => {
     expect(goalDeleteDetail(goals[0], goals, [entry('e1', 'massa', '2026-09-14')])).toBe(
       '1 logged day goes with it. The goal inside it stays, on its own. This cannot be undone.',
     );
+  });
+});
+
+/* The store harness above is also the right place to pin down which goal a session ticks. */
+describe('finishing a session', () => {
+  const exerciseGoal = (id: string) => goal(id, { isExercise: true });
+  // Dated today: the store closes older open sessions itself at load, as if midnight had passed.
+  const openSession = (id: string, goalId: string | null): Session => ({ ...session(id, null, ['bench']), goalId, date: todayLocal(), endedAt: null, closedBy: null });
+
+  it('ticks only the goal it was started from', async () => {
+    const { store } = await storeWith({ goals: [exerciseGoal('base'), exerciseGoal('ginasio')], sessions: [openSession('s1', 'ginasio')] });
+    await store.finishSession('s1');
+    expect(store.entries().map((e) => e.goalId)).toEqual(['ginasio']);
+  });
+
+  it('ticks the goal chosen on finish and remembers it', async () => {
+    const { store } = await storeWith({ goals: [exerciseGoal('base'), exerciseGoal('ginasio')], sessions: [openSession('s1', null)] });
+    await store.finishSession('s1', 'user', 'base');
+    expect(store.entries().map((e) => e.goalId)).toEqual(['base']);
+    expect(store.session('s1')!.goalId).toBe('base');
+  });
+
+  it('ticks nothing when no goal is chosen', async () => {
+    const { store } = await storeWith({ goals: [exerciseGoal('base'), exerciseGoal('ginasio')], sessions: [openSession('s1', null)] });
+    await store.finishSession('s1', 'user', null);
+    expect(store.entries()).toEqual([]);
+    expect(store.session('s1')!.endedAt).not.toBeNull();
+  });
+
+  it('at midnight, an unlinked session counts for the only exercise goal, and for none of several', async () => {
+    const one = await storeWith({ goals: [exerciseGoal('base'), goal('read')], sessions: [openSession('s1', null)] });
+    await one.store.finishSession('s1', 'midnight');
+    expect(one.store.entries().map((e) => e.goalId)).toEqual(['base']);
+
+    const many = await storeWith({ goals: [exerciseGoal('base'), exerciseGoal('ginasio')], sessions: [openSession('s1', null)] });
+    await many.store.finishSession('s1', 'midnight');
+    expect(many.store.entries()).toEqual([]);
+  });
+
+  it('never ticks a paused or non-exercise goal', async () => {
+    const { store } = await storeWith({
+      goals: [goal('paused', { isExercise: true, state: 'paused', pauses: [{ from: '2026-09-14', to: null }] })],
+      sessions: [openSession('s1', 'paused')],
+    });
+    await store.finishSession('s1');
+    expect(store.entries()).toEqual([]);
+  });
+
+  it('drops the link when the goal is deleted, keeping the session', async () => {
+    const { store } = await storeWith({ goals: [exerciseGoal('ginasio')], sessions: [{ ...session('s1', null, ['bench']), goalId: 'ginasio' }] });
+    await store.deleteGoal(store.goal('ginasio')!);
+    expect(store.session('s1')!.goalId).toBeNull();
   });
 });

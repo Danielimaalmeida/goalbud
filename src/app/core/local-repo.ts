@@ -57,6 +57,7 @@ export class LocalRepo implements Repo {
   deleteGoal(u: string, id: string) {
     return this.save(u, (s) => {
       s.entries = s.entries.filter((e) => e.goalId !== id);
+      s.sessions = s.sessions.map((x) => (x.goalId === id ? { ...x, goalId: null } : x));
       s.goals = s.goals.filter((g) => g.id !== id);
     });
   }
