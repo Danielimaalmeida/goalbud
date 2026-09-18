@@ -366,5 +366,9 @@ app-root { display: block; min-height: 100dvh; }
 .empty .btn { margin-top: 22px; padding: 18px 26px; border-radius: var(--r-tile); font-size: 15px; }
 .empty .after { font: 600 13px/1 var(--font); color: var(--ink-4); margin-top: 16px; }
 
+/* Drag and drop (CDK). The lifted preview is appended to body, so it is styled here. */
+.cdk-drag-preview { box-sizing: border-box; border-radius: 18px; box-shadow: 0 14px 36px rgba(27, 30, 28, .22); background: var(--surface); }
+.cdk-drag-animating { transition: transform 220ms cubic-bezier(0, 0, .2, 1); }
+
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .version { text-align: center; font: 500 11.5px/1.4 var(--font); color: var(--ink-6); padding: 4px 0 10px; }

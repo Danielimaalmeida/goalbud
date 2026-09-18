@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { CdkDrag, CdkDragHandle, CdkDropList, moveItemInArray, type CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { exerciseMeta } from '../core/exercises';
@@ -16,12 +17,13 @@ interface Draft {
 
 /**
  * Workout template editor. Exercises come from the library (a picker sheet)
- * or are created inline the first time a name is typed.
+ * or are created inline the first time a name is typed. Hold an exercise's
+ * header to lift it and drag it into a new position.
  */
 @Component({
   selector: 'app-workout-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ConfirmDelete, ExercisePicker],
+  imports: [ConfirmDelete, ExercisePicker, CdkDropList, CdkDrag, CdkDragHandle],
   template: `
     <div class="screen">
       <header class="form-head">
@@ -46,12 +48,15 @@ interface Draft {
         </section>
 
         <section>
-          <div class="lbl">Exercises</div>
-          <div class="exs">
+          <div class="lbl">Exercises@if (drafts().length > 1) { <span class="lbl-hint">hold one to reorder</span> }</div>
+          <div class="exs" cdkDropList cdkDropListLockAxis="y" (cdkDropListDropped)="reorder($event)">
             @for (d of drafts(); track d.exercise.id; let i = $index) {
-              <div class="card ex">
+              <div class="card ex" cdkDrag [cdkDragStartDelay]="{ touch: 350, mouse: 0 }" cdkDragBoundary=".exs" (cdkDragStarted)="lifted()">
                 <div class="ex-head">
-                  <div class="grow"><div class="ex-name">{{ d.exercise.name }}</div><div class="ex-kind">{{ meta(d.exercise) }}</div></div>
+                  <div class="grow handle" cdkDragHandle (contextmenu)="$event.preventDefault()">
+                    <span class="grip" aria-hidden="true"></span>
+                    <div class="grow"><div class="ex-name">{{ d.exercise.name }}</div><div class="ex-kind">{{ meta(d.exercise) }}</div></div>
+                  </div>
                   <button class="rm" (click)="remove(i)" aria-label="Remove from workout">×</button>
                 </div>
                 <div class="sets">
@@ -116,7 +121,8 @@ interface Draft {
   `,
   styles: `
     .body { flex: 1; padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 18px; }
-    .lbl { font: 800 11px/1 var(--font); color: var(--ink-4); letter-spacing: .09em; text-transform: uppercase; margin-bottom: 10px; }
+    .lbl { font: 800 11px/1 var(--font); color: var(--ink-4); letter-spacing: .09em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: baseline; gap: 8px; }
+    .lbl-hint { font: 600 11px/1 var(--font); color: var(--ink-5); letter-spacing: 0; text-transform: none; }
     .field { display: flex; }
     .card.pad { padding: 14px; border-radius: 18px; }
     .stepper { display: flex; align-items: center; gap: 12px; }
@@ -126,6 +132,11 @@ interface Draft {
     .exs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
     .ex { padding: 14px; border-radius: 18px; }
     .ex-head { display: flex; align-items: center; gap: 10px; }
+    /* The handle: hold to lift. pan-y keeps a plain swipe here scrolling the page (CDK would otherwise set touch-action: none). */
+    .handle { display: flex; align-items: center; gap: 10px; margin: -6px 0 -6px -4px; padding: 6px 0 6px 4px; border-radius: 12px; cursor: grab; touch-action: pan-y !important; -webkit-touch-callout: none; user-select: none; }
+    .grip { width: 10px; height: 16px; flex: none; background: radial-gradient(circle, var(--ink-7) 1.5px, transparent 1.6px) 0 0 / 5px 6px repeat; opacity: .9; }
+    .ex.cdk-drag-placeholder { opacity: .3; }
+    .exs.cdk-drop-list-dragging .ex:not(.cdk-drag-placeholder) { transition: transform 220ms cubic-bezier(0, 0, .2, 1); }
     .ex-name { font: 800 16px/1.2 var(--font); color: var(--ink); }
     .ex-kind { font: 500 12px/1.3 var(--font); color: var(--ink-4); margin-top: 3px; }
     .grow { flex: 1; min-width: 0; }
@@ -224,6 +235,14 @@ export class WorkoutEditorScreen {
     this.drafts.set([...this.drafts(), { exercise: ex, sets }]);
   }
   remove(i: number) { this.drafts.set(this.drafts().filter((_, k) => k !== i)); }
+  reorder(e: CdkDragDrop<Draft[]>) {
+    if (e.previousIndex === e.currentIndex) return;
+    const next = [...this.drafts()];
+    moveItemInArray(next, e.previousIndex, e.currentIndex);
+    this.drafts.set(next);
+  }
+  /** A short buzz where the platform has one, so the lift is felt. */
+  lifted() { navigator.vibrate?.(15); }
   addSet(i: number) {
     this.drafts.set(this.drafts().map((d, k) => (k === i ? { ...d, sets: [...d.sets, { ...(d.sets.at(-1) ?? { reps: 10, weight: null, seconds: 60 }) }] } : d)));
   }
