@@ -221,7 +221,7 @@ export class AppStore {
       if (found.archived) await this.saveExercise({ ...found, archived: false });
       return found;
     }
-    const ex: Exercise = { id: newId(), name: trimmed, kind, restSeconds: null, archived: false };
+    const ex: Exercise = { id: newId(), name: trimmed, kind, restSeconds: null, primaryMuscle: null, secondaryMuscles: [], archived: false };
     await this.saveExercise(ex);
     return ex;
   }

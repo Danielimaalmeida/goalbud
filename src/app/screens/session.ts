@@ -2,17 +2,20 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input
 import { Router } from '@angular/router';
 import { formatElapsed } from '../core/dates';
 import { pluralise } from '../core/goals';
-import type { ExerciseKind, Session, SessionExercise, SessionSet } from '../core/model';
-import { doneSets, emptySet, formatSet, formatTarget, isExerciseDone, nextOpenSet, sessionProgress, snapshotExercise } from '../core/sessions';
+import type { Exercise, ExerciseKind, Session, SessionExercise, SessionSet } from '../core/model';
+import { allSetsDone, currentExercise, doneSets, emptySet, formatSet, formatTarget, isExerciseDone, nextExercise, nextOpenSet, sessionProgress, snapshotExercise } from '../core/sessions';
 import { AppStore } from '../core/store';
+import { ExercisePicker } from '../ui/exercise-picker';
 
 /**
  * Live session, full-list layout. Every set saves immediately. Rest timer
- * auto-starts on tick, tap to skip, no sound. Finish closes as-is.
+ * auto-starts on tick, tap to skip, no sound. Finish closes as-is. The list
+ * is a plan, not an order: tap any exercise to do it now.
  */
 @Component({
   selector: 'app-session',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ExercisePicker],
   template: `
     @if (session(); as s) {
       <div class="screen">
@@ -39,7 +42,7 @@ import { AppStore } from '../core/store';
                 </div>
                 @if (!s.endedAt) { <button class="undo" (click)="untick(i, ex.sets.length - 1)">Undo last set</button> }
               </section>
-            } @else if (i === progress().current && !s.endedAt) {
+            } @else if (i === current() && !s.endedAt) {
               <section class="card exc">
                 <div class="eh"><div class="en big">{{ ex.name }}</div><div class="grow"></div><div class="em">set {{ open(ex) + 1 }} of {{ ex.sets.length }}</div></div>
                 @for (set of ex.sets; track $index; let j = $index) {
@@ -67,18 +70,31 @@ import { AppStore } from '../core/store';
                 <button class="addset" (click)="addSet(i)">+ Add a set</button>
               </section>
             } @else {
-              <section class="card exn">
-                <div class="grow"><div class="en">{{ ex.name }}</div><div class="ek">{{ pluralise(ex.sets.length, 'set') }}@if (ex.sets[0]) { · {{ formatTarget(ex.sets[0].target, ex.kind) }} }</div></div>
-                @if (i === progress().current + 1 && !s.endedAt) { <span class="upnext">Up next</span> }
-              </section>
+              <button class="card exn" (click)="focus.set(i)" [disabled]="!!s.endedAt" [attr.aria-label]="'Do ' + ex.name + ' now'">
+                <span class="grow">
+                  <span class="en">{{ ex.name }}</span>
+                  <span class="ek">
+                    @if (done(ex).length) { {{ done(ex).length }} of {{ ex.sets.length }} sets done · tap to continue }
+                    @else { {{ pluralise(ex.sets.length, 'set') }}@if (ex.sets[0]) { · {{ formatTarget(ex.sets[0].target, ex.kind) }} } }
+                  </span>
+                </span>
+                @if (!s.endedAt) {
+                  @if (i === upNext()) { <span class="upnext">Up next</span> } @else { <span class="chev">›</span> }
+                }
+              </button>
             }
           }
 
           @if (!s.endedAt) {
             <div class="card addex">
+              @if (available().length) {
+                <button class="lib" (click)="picking.set(true)">
+                  <span class="grow">Choose from your exercises</span><span class="aside">{{ available().length }}</span><span class="chev">›</span>
+                </button>
+              }
               <div class="addrow">
-                <input class="addin" list="sess-ex" [value]="newName()" (input)="newName.set(v($event))" (keydown.enter)="addExercise()" [placeholder]="s.exercises.length ? 'Add another exercise…' : 'Type an exercise to start…'" autocomplete="off" />
-                <datalist id="sess-ex">@for (e of store.activeExercises(); track e.id) { <option [value]="e.name"></option> }</datalist>
+                <input class="addin" list="sess-ex" [value]="newName()" (input)="newName.set(v($event))" (keydown.enter)="addExercise()" [placeholder]="available().length ? 'Or type a new one…' : s.exercises.length ? 'Add another exercise…' : 'Type an exercise to start…'" autocomplete="off" />
+                <datalist id="sess-ex">@for (e of available(); track e.id) { <option [value]="e.name"></option> }</datalist>
                 <button class="btn is-sm is-dark" [disabled]="!newName().trim()" (click)="addExercise()">Add</button>
               </div>
               @if (isNew()) {
@@ -100,6 +116,9 @@ import { AppStore } from '../core/store';
           </div>
         }
       </div>
+      @if (picking()) {
+        <app-exercise-picker [exclude]="usedIds()" (pick)="addExisting($event)" (close)="picking.set(false)" />
+      }
     }
   `,
   styles: `
@@ -121,8 +140,10 @@ import { AppStore } from '../core/store';
     .ek { font: 500 12px/1.3 var(--font); color: var(--ink-4); margin-top: 4px; }
     .exc { border: 2px solid var(--ink); }
     .exc .eh { margin-bottom: 4px; }
-    .exn { display: flex; align-items: center; gap: 12px; }
-    .exn .grow .en { margin: 0; }
+    .exn { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; }
+    .exn .en, .exn .ek { display: block; margin: 0; }
+    .exn:disabled .en { color: var(--ink-3); }
+    .exn .chev { font: 700 18px/1 var(--font); color: var(--ink-7); padding: 0 6px; }
     .upnext { font: 700 12px/1 var(--font); color: var(--ink-4); background: var(--fill); border-radius: 999px; padding: 10px 13px; }
     .srow { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line-soft); }
     .srow:last-of-type { border-bottom: 0; }
@@ -140,6 +161,9 @@ import { AppStore } from '../core/store';
     .undo { margin-top: 10px; font: 700 12px/1 var(--font); color: var(--ink-4); padding: 4px 0; }
     .tags { margin-top: 2px; }
     .addex { display: flex; flex-direction: column; gap: 10px; }
+    .lib { display: flex; align-items: center; gap: 10px; width: 100%; background: var(--sage-tint); border-radius: 12px; padding: 13px 14px; font: 800 14px/1 var(--font); color: var(--sage); }
+    .lib .aside { font: 700 12px/1 var(--font); color: var(--sage-ink-2); }
+    .lib .chev { font: 700 18px/1 var(--font); color: var(--sage-ink-2); }
     .addrow { display: flex; gap: 8px; align-items: center; }
     .addin { flex: 1; border: 0; outline: 0; background: var(--fill); border-radius: 12px; padding: 13px 14px; font: 700 15px/1 var(--font); color: var(--ink); }
     .tabs { display: flex; gap: 7px; }
@@ -157,6 +181,16 @@ export class SessionScreen {
   readonly id = input.required<string>();
   readonly session = computed(() => this.store.session(this.id()) ?? null);
   readonly progress = computed(() => this.session() ? sessionProgress(this.session()!) : { done: 0, total: 0, current: -1 });
+  /** The exercise the user tapped to do now. Any order is fine: a machine may be busy. */
+  readonly focus = signal<number | null>(null);
+  readonly current = computed(() => this.session() ? currentExercise(this.session()!, this.focus()) : -1);
+  readonly upNext = computed(() => this.session() ? nextExercise(this.session()!, this.current()) : -1);
+  readonly picking = signal(false);
+  readonly usedIds = computed(() => this.session()?.exercises.map((e) => e.exerciseId) ?? []);
+  readonly available = computed(() => {
+    const used = new Set(this.usedIds());
+    return this.store.activeExercises().filter((e) => !used.has(e.id));
+  });
   readonly pluralise = pluralise;
   readonly formatSet = formatSet;
   readonly formatTarget = formatTarget;
@@ -208,12 +242,12 @@ export class SessionScreen {
     return this.update((s) => { s.exercises[i].sets[j][f] = val; return s; });
   }
 
-  /** Tick a set: actuals default to the target, save now, start rest. */
+  /** Tick a set: actuals default to the target, save now, start rest unless nothing is left. */
   async tick(i: number, j: number) {
     const s = this.session();
     if (!s) return;
     const ex = s.exercises[i];
-    const isLast = i === s.exercises.length - 1 && j === ex.sets.length - 1;
+    const isLast = allSetsDone(s, { i, j });
     await this.update((x) => {
       const set = x.exercises[i].sets[j];
       set.reps = set.reps ?? set.target.reps;
@@ -243,14 +277,23 @@ export class SessionScreen {
     if (!name) return;
     const ex = await this.store.ensureExercise(name, this.newKind());
     if (this.store.saveError()) return;
-    const s = this.session();
-    const workoutRest = s?.workoutId ? this.store.workouts().find((w) => w.id === s.workoutId)?.restSeconds ?? null : null;
-    const like = s?.exercises.at(-1)?.sets.length ?? 3;
-    const targets = Array.from({ length: like }, () => (ex.kind === 'reps' ? { reps: 10, weight: null, seconds: null } : { reps: null, weight: null, seconds: 60 }));
-    const snap: SessionExercise = snapshotExercise(ex, targets, workoutRest);
-    await this.update((x) => { x.exercises.push(snap); return x; });
+    await this.append(ex);
     this.newName.set('');
     this.newKind.set('reps');
+  }
+  addExisting(ex: Exercise) {
+    this.picking.set(false);
+    return this.append(ex);
+  }
+  /** Add an exercise to the session with as many sets as the one before it. */
+  private append(ex: Exercise) {
+    const s = this.session();
+    if (!s || this.usedIds().includes(ex.id)) return Promise.resolve();
+    const workoutRest = s.workoutId ? this.store.workouts().find((w) => w.id === s.workoutId)?.restSeconds ?? null : null;
+    const like = s.exercises.at(-1)?.sets.length ?? 3;
+    const targets = Array.from({ length: like }, () => (ex.kind === 'reps' ? { reps: 10, weight: null, seconds: null } : { reps: null, weight: null, seconds: 60 }));
+    const snap: SessionExercise = snapshotExercise(ex, targets, workoutRest);
+    return this.update((x) => { x.exercises.push(snap); return x; });
   }
   skipRest() { this.restEnd.set(null); }
   async finish() {

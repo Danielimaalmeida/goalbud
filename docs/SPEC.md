@@ -88,12 +88,16 @@ A container with a target date ("finish the painting by October").
   reused. No preset library shipped with the app.
 - Exercise kind: **reps + weight** or **time-based** (duration).
 - Optional default rest time (app default 90 s).
+- Optional muscle groups: one primary, any number of secondary. Shown in
+  lists and searchable when picking from the library; never required.
 - Archived by default. Deleting one removes it from every workout template and
   leaves past sessions untouched.
 
 ### 4.2 Workout (template)
 - A named list of exercises, each with N sets. For reps exercises a set has
   target reps and weight; for time exercises a set has a target duration.
+- Exercises are added from the library (a picker over existing exercises) or
+  by typing a new name, which creates the exercise inline.
 - Rest time: app default, overridable per workout.
 - Editing a workout never touches past sessions.
 - Model is exercise-centric (sets per exercise). Round/circuit mode is out of
@@ -105,6 +109,8 @@ A container with a target date ("finish the painting by October").
 - Screen shows the planned list. Per set: tick done, edit actual reps/weight
   or duration. Rest timer auto-starts on tick, tap to skip, no sound. Running
   session clock.
+- The list is a plan, not an order: any exercise can be tapped and done next
+  (a machine may be busy). Finished exercises stay ticked wherever they sit.
 - **Every set saves immediately** to the server.
 - A session is a **snapshot** of actuals; the workout template is not linked
   by reference for its content.

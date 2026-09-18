@@ -30,8 +30,14 @@ const fromGoal = (userId: string, g: Goal) => ({
 });
 const toEntry = (r: any): GoalEntry => ({ id: r.id, goalId: r.goal_id, date: r.date, kind: r.kind, loggedAt: r.logged_at });
 const fromEntry = (userId: string, e: GoalEntry) => ({ id: e.id, user_id: userId, goal_id: e.goalId, date: e.date, kind: e.kind, logged_at: e.loggedAt });
-const toExercise = (r: any): Exercise => ({ id: r.id, name: r.name, kind: r.kind, restSeconds: r.rest_seconds, archived: r.archived });
-const fromExercise = (userId: string, e: Exercise) => ({ id: e.id, user_id: userId, name: e.name, kind: e.kind, rest_seconds: e.restSeconds, archived: e.archived });
+const toExercise = (r: any): Exercise => ({
+  id: r.id, name: r.name, kind: r.kind, restSeconds: r.rest_seconds,
+  primaryMuscle: r.primary_muscle ?? null, secondaryMuscles: r.secondary_muscles ?? [], archived: r.archived,
+});
+const fromExercise = (userId: string, e: Exercise) => ({
+  id: e.id, user_id: userId, name: e.name, kind: e.kind, rest_seconds: e.restSeconds,
+  primary_muscle: e.primaryMuscle, secondary_muscles: e.secondaryMuscles, archived: e.archived,
+});
 const toWorkout = (r: any): Workout => ({ id: r.id, name: r.name, restSeconds: r.rest_seconds, exercises: r.exercises ?? [], archived: r.archived });
 const fromWorkout = (userId: string, w: Workout) => ({ id: w.id, user_id: userId, name: w.name, rest_seconds: w.restSeconds, exercises: w.exercises, archived: w.archived });
 const toSession = (r: any): Session => ({

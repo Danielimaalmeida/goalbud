@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { exerciseMeta } from '../core/exercises';
 import { pluralise } from '../core/goals';
 import type { Exercise, Workout } from '../core/model';
 import { sessionsForExercise, setCount } from '../core/sessions';
@@ -39,7 +40,7 @@ import { WorkoutPicker } from './workout-picker';
           <div class="list">
             @for (e of topExercises(); track e.id) {
               <a class="row" [routerLink]="['/exercises', e.id]">
-                <span class="grow"><span class="name sm">{{ e.name }}</span><span class="meta">{{ e.kind === 'reps' ? 'Reps & weight' : 'Time' }} · rest {{ e.restSeconds ?? 90 }} s</span></span>
+                <span class="grow"><span class="name sm">{{ e.name }}</span><span class="meta">{{ meta(e) }} · rest {{ e.restSeconds ?? 90 }} s</span></span>
                 <span class="aside">{{ pluralise(count(e), 'session') }}</span>
                 <span class="chev">›</span>
               </a>
@@ -76,6 +77,7 @@ export class WorkoutsScreen {
   readonly picker = signal(false);
   readonly pluralise = pluralise;
   readonly setCount = setCount;
+  readonly meta = exerciseMeta;
 
   readonly topExercises = computed(() =>
     [...this.store.activeExercises()].sort((a, b) => this.count(b) - this.count(a)).slice(0, 3));

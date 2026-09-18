@@ -80,11 +80,26 @@ export interface GoalEntry {
 
 export type ExerciseKind = 'reps' | 'time';
 
+export const MUSCLE_GROUPS = [
+  'chest', 'back', 'shoulders', 'biceps', 'triceps', 'forearms',
+  'core', 'hips', 'glutes', 'quads', 'hamstrings', 'calves',
+] as const;
+export type MuscleGroup = (typeof MUSCLE_GROUPS)[number];
+
+export const MUSCLE_LABELS: Record<MuscleGroup, string> = {
+  chest: 'Chest', back: 'Back', shoulders: 'Shoulders', biceps: 'Biceps', triceps: 'Triceps', forearms: 'Forearms',
+  core: 'Core', hips: 'Hips', glutes: 'Glutes', quads: 'Quads', hamstrings: 'Hamstrings', calves: 'Calves',
+};
+
 export interface Exercise {
   id: string;
   name: string;
   kind: ExerciseKind;
   restSeconds: number | null;
+  /** Optional. The muscle the exercise is mainly for. */
+  primaryMuscle: MuscleGroup | null;
+  /** Optional. Muscles that also work, never including the primary one. */
+  secondaryMuscles: MuscleGroup[];
   archived: boolean;
 }
 

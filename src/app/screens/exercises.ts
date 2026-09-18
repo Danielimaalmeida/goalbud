@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { exerciseMeta } from '../core/exercises';
 import { pluralise } from '../core/goals';
 import { sessionsForExercise } from '../core/sessions';
 import { AppStore } from '../core/store';
@@ -19,7 +20,7 @@ import { AppStore } from '../core/store';
         <div class="list">
           @for (r of rows(); track r.id) {
             <a class="row" [routerLink]="['/exercises', r.id]">
-              <span class="grow"><span class="name">{{ r.name }}</span><span class="meta">{{ r.kind === 'reps' ? 'Reps & weight' : 'Time' }} · rest {{ r.restSeconds ?? 90 }} s</span></span>
+              <span class="grow"><span class="name">{{ r.name }}</span><span class="meta">{{ meta(r) }} · rest {{ r.restSeconds ?? 90 }} s</span></span>
               <span class="aside">{{ pluralise(r.sessions, 'session') }}</span>
               <span class="chev">›</span>
             </a>
@@ -35,6 +36,7 @@ export class ExercisesScreen {
   private router = inject(Router);
   private location = inject(Location);
   readonly pluralise = pluralise;
+  readonly meta = exerciseMeta;
   readonly rows = computed(() =>
     this.store.activeExercises()
       .map((e) => ({ ...e, sessions: sessionsForExercise(this.store.sessions(), e.id).length }))

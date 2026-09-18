@@ -47,6 +47,35 @@ export function nextOpenSet(ex: SessionExercise): number {
   return ex.sets.findIndex((s) => s.doneAt === null);
 }
 
+/**
+ * Which exercise is open on screen. Exercises can be done in any order (a
+ * machine may be busy), so the one the user tapped wins while it still has
+ * sets left; once it is finished the next open one after it takes over, and
+ * failing that the first open one in the list. -1 when everything is done.
+ */
+export function currentExercise(s: Session, preferred: number | null): number {
+  const open = (i: number) => i >= 0 && i < s.exercises.length && !isExerciseDone(s.exercises[i]);
+  if (preferred !== null) {
+    for (let i = preferred; i < s.exercises.length; i++) if (open(i)) return i;
+  }
+  return s.exercises.findIndex((e) => !isExerciseDone(e));
+}
+
+/** The first open exercise after the current one, wrapping round. -1 when there is none. */
+export function nextExercise(s: Session, current: number): number {
+  const n = s.exercises.length;
+  for (let k = 1; k < n; k++) {
+    const i = (current + k) % n;
+    if (!isExerciseDone(s.exercises[i])) return i;
+  }
+  return -1;
+}
+
+/** True when every set in the session is ticked, or would be once (i, j) is. */
+export function allSetsDone(s: Session, except?: { i: number; j: number }): boolean {
+  return s.exercises.every((e, i) => e.sets.every((set, j) => set.doneAt !== null || (except?.i === i && except?.j === j)));
+}
+
 function num(n: number | null): string {
   return n === null ? '' : String(Number.isInteger(n) ? n : n.toFixed(1).replace(/\.0$/, ''));
 }

@@ -3,23 +3,28 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { formatShort } from '../core/dates';
 import { exerciseDeleteDetail } from '../core/deletes';
+import { kindLabel, muscleSummary, toggleSecondary, withPrimary } from '../core/exercises';
 import { pluralise } from '../core/goals';
-import { APP_DEFAULT_REST_SECONDS, type Exercise, type Session, type SessionExercise } from '../core/model';
+import { APP_DEFAULT_REST_SECONDS, MUSCLE_GROUPS, MUSCLE_LABELS, type Exercise, type MuscleGroup, type Session, type SessionExercise } from '../core/model';
 import { bestSet, doneSets, formatSet, isBestInSession, sessionsForExercise } from '../core/sessions';
 import { AppStore } from '../core/store';
 import { ConfirmDelete } from '../ui/confirm-delete';
+import { Sheet } from '../ui/sheet';
 
 /** Per-exercise history: actuals per session. The chart is a promise until there is a month of data. */
 @Component({
   selector: 'app-exercise-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ConfirmDelete],
+  imports: [ConfirmDelete, Sheet],
   template: `
     @if (exercise(); as ex) {
       <div class="screen">
         <header class="detail-head">
           <button class="back" (click)="back()" aria-label="Back">‹</button>
-          <div class="grow"><div class="title">{{ ex.name }}</div><div class="sub">{{ ex.kind === 'reps' ? 'Reps & weight' : 'Time' }} · rest {{ rest(ex) }} s</div></div>
+          <div class="grow">
+            <div class="title">{{ ex.name }}</div>
+            <div class="sub">{{ kindLabel(ex.kind) }} · rest {{ rest(ex) }} s@if (muscles(ex); as m) { · {{ m }} }</div>
+          </div>
         </header>
         <div class="screen-body">
           <div class="card stats">
@@ -64,7 +69,10 @@ import { ConfirmDelete } from '../ui/confirm-delete';
               <button class="step" (click)="setRest(ex, 15)" aria-label="More rest">+</button>
             </div>
             <button class="row" (click)="toggleKind(ex)">
-              <span class="row-action grow">Kind</span><span class="aside">{{ ex.kind === 'reps' ? 'Reps & weight' : 'Time' }}</span><span class="chev">›</span>
+              <span class="row-action grow">Kind</span><span class="aside">{{ kindLabel(ex.kind) }}</span><span class="chev">›</span>
+            </button>
+            <button class="row" (click)="editingMuscles.set(true)">
+              <span class="row-action grow">Muscles</span><span class="aside">{{ muscles(ex) || 'Not set' }}</span><span class="chev">›</span>
             </button>
             @if (ex.archived) {
               <button class="row" (click)="store.saveExercise({ ...ex, archived: false })"><span class="row-action grow">Restore</span><span class="chev">›</span></button>
@@ -78,12 +86,36 @@ import { ConfirmDelete } from '../ui/confirm-delete';
         </div>
       </div>
 
+      @if (editingMuscles()) {
+        <app-sheet (close)="editingMuscles.set(false)">
+          <div class="title">Muscles</div>
+          <div class="sub">Optional. Which muscle is {{ ex.name }} mainly for, and which else work?</div>
+          <div class="eyebrow">Main muscle</div>
+          <div class="chips">
+            @for (m of groups; track m) {
+              <button class="chip" [class.is-on]="ex.primaryMuscle === m" (click)="setPrimary(ex, m)">{{ label(m) }}</button>
+            }
+          </div>
+          <div class="eyebrow">Also works</div>
+          <div class="chips">
+            @for (m of groups; track m) {
+              <button class="chip" [class.is-on]="ex.secondaryMuscles.includes(m)" [disabled]="ex.primaryMuscle === m" (click)="toggleSecondary(ex, m)">{{ label(m) }}</button>
+            }
+          </div>
+          <button class="btn is-block done" (click)="editingMuscles.set(false)">Done</button>
+        </app-sheet>
+      }
       @if (confirming()) {
         <app-confirm-delete [name]="ex.name" [detail]="deleteDetail(ex)" (confirmed)="remove(ex)" (cancelled)="confirming.set(false)" />
       }
     }
   `,
   styles: `
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 2px; }
+    .chip { font: 700 13px/1 var(--font); color: var(--ink-2); background: var(--fill); border-radius: var(--r-pill); padding: 11px 14px; }
+    .chip.is-on { background: var(--sage); color: #fff; font-weight: 800; }
+    .chip:disabled { opacity: .35; }
+    .done { margin-top: 22px; }
     .grow { flex: 1; min-width: 0; }
     .stat .num { font-size: 30px; }
     .promise { background: var(--surface-muted); border: 1px dashed var(--sand); border-radius: var(--r-tile); padding: 16px; display: flex; align-items: center; gap: 12px; }
@@ -114,9 +146,21 @@ export class ExerciseDetailScreen {
   });
   readonly formatSet = formatSet;
   readonly pluralise = pluralise;
+  readonly kindLabel = kindLabel;
+  readonly muscles = muscleSummary;
+  readonly groups = MUSCLE_GROUPS;
   readonly confirming = signal(false);
+  readonly editingMuscles = signal(false);
 
   rest(ex: Exercise) { return ex.restSeconds ?? APP_DEFAULT_REST_SECONDS; }
+  label(m: MuscleGroup) { return MUSCLE_LABELS[m]; }
+  /** Tap the main muscle again to clear it. Saves straight away, like rest. */
+  setPrimary(ex: Exercise, m: MuscleGroup) {
+    return this.store.saveExercise(withPrimary(ex, ex.primaryMuscle === m ? null : m));
+  }
+  toggleSecondary(ex: Exercise, m: MuscleGroup) {
+    return this.store.saveExercise(toggleSecondary(ex, m));
+  }
   fmt(d: string) { return formatShort(d); }
   topValue(b: { weight: number | null; seconds: number | null }, ex: Exercise): string {
     const v = ex.kind === 'reps' ? b.weight : b.seconds;

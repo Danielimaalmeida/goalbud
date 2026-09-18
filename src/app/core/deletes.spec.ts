@@ -20,7 +20,7 @@ function entry(id: string, goalId: string, date: string): GoalEntry {
   return { id, goalId, date, kind: 'done', loggedAt: `${date}T09:00:00.000Z` };
 }
 function exercise(id: string): Exercise {
-  return { id, name: id, kind: 'reps', restSeconds: null, archived: false };
+  return { id, name: id, kind: 'reps', restSeconds: null, primaryMuscle: null, secondaryMuscles: [], archived: false };
 }
 function workout(id: string, exerciseIds: string[]): Workout {
   return {

@@ -1,6 +1,5 @@
 import { addDays, todayLocal, weekStart, weekday } from './dates';
-import type { Weekday } from './model';
-import type { Exercise, Goal, GoalEntry, Session, Snapshot, Workout } from './model';
+import type { Exercise, Goal, GoalEntry, MuscleGroup, Session, Snapshot, Weekday, Workout } from './model';
 
 /**
  * Demo data mirroring the design mockups, generated relative to today so
@@ -66,19 +65,19 @@ export function seedSnapshot(userId: string, email: string, displayName: string)
   for (let i = 70; i >= 14; i--) if (i % 5 !== 0) done('spanish', d(-i), 8, 30);
 
   const exercises: Exercise[] = [
-    ex('bench', 'Bench press', 'reps', 90),
-    ex('ohp', 'Overhead press', 'reps', 90),
-    ex('fly', 'Cable fly', 'reps', 60),
-    ex('dips', 'Dips', 'reps', 90),
-    ex('plank', 'Plank', 'time', 60),
-    ex('rows', 'Rows', 'reps', 90),
-    ex('lat', 'Lat pulldown', 'reps', 90),
-    ex('curl', 'Curls', 'reps', 60),
-    ex('face', 'Face pulls', 'reps', 60),
-    ex('squat', 'Squat', 'reps', 120),
-    ex('rdl', 'Romanian deadlift', 'reps', 120),
-    ex('lunge', 'Lunges', 'reps', 90),
-    ex('calf', 'Calf raises', 'reps', 60),
+    ex('bench', 'Bench press', 'reps', 90, 'chest', ['triceps', 'shoulders']),
+    ex('ohp', 'Overhead press', 'reps', 90, 'shoulders', ['triceps']),
+    ex('fly', 'Cable fly', 'reps', 60, 'chest'),
+    ex('dips', 'Dips', 'reps', 90, 'triceps', ['chest']),
+    ex('plank', 'Plank', 'time', 60, 'core'),
+    ex('rows', 'Rows', 'reps', 90, 'back', ['biceps']),
+    ex('lat', 'Lat pulldown', 'reps', 90, 'back', ['biceps']),
+    ex('curl', 'Curls', 'reps', 60, 'biceps'),
+    ex('face', 'Face pulls', 'reps', 60, 'shoulders', ['back']),
+    ex('squat', 'Squat', 'reps', 120, 'quads', ['glutes', 'core']),
+    ex('rdl', 'Romanian deadlift', 'reps', 120, 'hamstrings', ['glutes', 'back']),
+    ex('lunge', 'Lunges', 'reps', 90, 'quads', ['glutes']),
+    ex('calf', 'Calf raises', 'reps', 60, 'calves'),
     ex('hang', 'Dead hang', 'time', 60),
   ];
 
@@ -152,8 +151,8 @@ export function seedSnapshot(userId: string, email: string, displayName: string)
       ...extra,
     };
   }
-  function ex(id: string, name: string, kind: Exercise['kind'], rest: number): Exercise {
-    return { id, name, kind, restSeconds: rest, archived: false };
+  function ex(id: string, name: string, kind: Exercise['kind'], rest: number, primary: MuscleGroup | null = null, secondary: MuscleGroup[] = []): Exercise {
+    return { id, name, kind, restSeconds: rest, primaryMuscle: primary, secondaryMuscles: secondary, archived: false };
   }
   function reps(n: number, r: number, w: number | null) {
     return Array.from({ length: n }, () => ({ reps: r, weight: w, seconds: null }));

@@ -1,22 +1,27 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { exerciseMeta } from '../core/exercises';
 import { newId } from '../core/ids';
 import { APP_DEFAULT_REST_SECONDS, type Exercise, type ExerciseKind, type SetTarget, type Workout } from '../core/model';
 import { AppStore } from '../core/store';
 import { workoutDeleteDetail } from '../core/deletes';
 import { ConfirmDelete } from '../ui/confirm-delete';
+import { ExercisePicker } from '../ui/exercise-picker';
 
 interface Draft {
   exercise: Exercise;
   sets: SetTarget[];
 }
 
-/** Workout template editor. Exercises are created inline the first time a name is typed. */
+/**
+ * Workout template editor. Exercises come from the library (a picker sheet)
+ * or are created inline the first time a name is typed.
+ */
 @Component({
   selector: 'app-workout-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ConfirmDelete],
+  imports: [ConfirmDelete, ExercisePicker],
   template: `
     <div class="screen">
       <header class="form-head">
@@ -46,7 +51,7 @@ interface Draft {
             @for (d of drafts(); track d.exercise.id; let i = $index) {
               <div class="card ex">
                 <div class="ex-head">
-                  <div class="grow"><div class="ex-name">{{ d.exercise.name }}</div><div class="ex-kind">{{ d.exercise.kind === 'reps' ? 'Reps & weight' : 'Time' }}</div></div>
+                  <div class="grow"><div class="ex-name">{{ d.exercise.name }}</div><div class="ex-kind">{{ meta(d.exercise) }}</div></div>
                   <button class="rm" (click)="remove(i)" aria-label="Remove from workout">×</button>
                 </div>
                 <div class="sets">
@@ -70,6 +75,12 @@ interface Draft {
           </div>
 
           <div class="card pad add">
+            @if (suggestions().length) {
+              <button class="lib" (click)="picking.set(true)">
+                <span class="grow">Choose from your exercises</span><span class="aside">{{ suggestions().length }}</span><span class="chev">›</span>
+              </button>
+              <div class="or">or type a new one</div>
+            }
             <div class="addrow">
               <input class="addin" list="ex-names" [value]="newName()" (input)="newName.set(v($event))" (keydown.enter)="add()" placeholder="Add an exercise…" autocomplete="off" />
               <datalist id="ex-names">@for (e of suggestions(); track e.id) { <option [value]="e.name"></option> }</datalist>
@@ -94,6 +105,9 @@ interface Draft {
       </div>
     </div>
 
+    @if (picking()) {
+      <app-exercise-picker [exclude]="usedIds()" (pick)="pickExisting($event)" (close)="picking.set(false)" />
+    }
     @if (existing(); as w) {
       @if (confirming()) {
         <app-confirm-delete [name]="w.name" [detail]="deleteDetail(w)" (confirmed)="removeWorkout(w)" (cancelled)="confirming.set(false)" />
@@ -127,6 +141,10 @@ interface Draft {
     .x { font: 700 13px/1 var(--font); color: var(--ink-5); }
     .addset { margin-top: 10px; font: 700 13px/1 var(--font); color: var(--sage); padding: 6px 2px; }
     .add { display: flex; flex-direction: column; gap: 10px; }
+    .lib { display: flex; align-items: center; gap: 10px; width: 100%; background: var(--sage-tint); border-radius: 12px; padding: 13px 14px; font: 800 14px/1 var(--font); color: var(--sage); }
+    .lib .aside { font: 700 12px/1 var(--font); color: var(--sage-ink-2); }
+    .lib .chev { font: 700 18px/1 var(--font); color: var(--sage-ink-2); }
+    .or { font: 600 11.5px/1 var(--font); color: var(--ink-5); text-align: center; letter-spacing: .04em; text-transform: uppercase; }
     .addrow { display: flex; gap: 8px; align-items: center; }
     .addin { flex: 1; border: 0; outline: 0; background: var(--fill); border-radius: 12px; padding: 13px 14px; font: 700 15px/1 var(--font); color: var(--ink); }
     .tabs { display: flex; gap: 7px; }
@@ -152,9 +170,12 @@ export class WorkoutEditorScreen {
   readonly newKind = signal<ExerciseKind>('reps');
   readonly busy = signal(false);
   readonly confirming = signal(false);
+  readonly picking = signal(false);
+  readonly meta = exerciseMeta;
 
+  readonly usedIds = computed(() => this.drafts().map((d) => d.exercise.id));
   readonly suggestions = computed(() => {
-    const used = new Set(this.drafts().map((d) => d.exercise.id));
+    const used = new Set(this.usedIds());
     return this.store.activeExercises().filter((e) => !used.has(e.id));
   });
   readonly isNew = computed(() => {
@@ -186,12 +207,21 @@ export class WorkoutEditorScreen {
     if (!name) return;
     const ex = await this.store.ensureExercise(name, this.newKind());
     if (this.store.saveError()) return;
+    this.addDraft(ex);
+    this.newName.set('');
+    this.newKind.set('reps');
+  }
+  pickExisting(ex: Exercise) {
+    this.picking.set(false);
+    this.addDraft(ex);
+  }
+  /** Same number of sets as the exercise before it, so a workout stays even. */
+  private addDraft(ex: Exercise) {
+    if (this.usedIds().includes(ex.id)) return;
     const last = this.drafts().at(-1);
     const template: SetTarget = ex.kind === 'reps' ? { reps: 10, weight: null, seconds: null } : { reps: null, weight: null, seconds: 60 };
     const sets = Array.from({ length: last?.sets.length ?? 3 }, () => ({ ...template }));
     this.drafts.set([...this.drafts(), { exercise: ex, sets }]);
-    this.newName.set('');
-    this.newKind.set('reps');
   }
   remove(i: number) { this.drafts.set(this.drafts().filter((_, k) => k !== i)); }
   addSet(i: number) {
