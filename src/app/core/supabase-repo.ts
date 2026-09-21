@@ -1,7 +1,7 @@
 import { Injectable, inject, InjectionToken, signal } from '@angular/core';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
-import type { AuthProvider, AuthUser } from './auth';
+import { EmailNotConfirmedError, type AuthProvider, type AuthUser, type SignUpResult } from './auth';
 import type { Exercise, Goal, GoalEntry, Profile, Session, Snapshot, Workout } from './model';
 import { OfflineError, type Repo } from './repo';
 
@@ -14,6 +14,11 @@ function fail(error: { message: string; code?: string; details?: string | null }
   if (!error) return;
   if (!navigator.onLine || /failed to fetch|networkerror|load failed/i.test(error.message)) throw new OfflineError();
   throw new Error(`${what ? what + ': ' : ''}${error.message}${error.code ? ` (${error.code})` : ''}`);
+}
+
+/** PostgREST's transient "this token was issued in the future" rejection (PGRST303). */
+function clockSkewed(error: { message: string; code?: string } | null): boolean {
+  return !!error && (error.code === 'PGRST303' || /issued at future/i.test(error.message));
 }
 
 /* Row ↔ model mapping. Rows are snake_case; nested lists live in jsonb. */
@@ -59,7 +64,7 @@ export class SupabaseRepo implements Repo {
   private auth = inject(SupabaseAuth);
 
   async loadAll(userId: string): Promise<Snapshot> {
-    const [profile, goals, entries, exercises, workouts, sessions] = await Promise.all([
+    const read = () => Promise.all([
       this.db.from('profiles').select('*').eq('id', userId).maybeSingle(),
       this.db.from('goals').select('*').eq('user_id', userId).order('sort_order'),
       this.db.from('goal_entries').select('*').eq('user_id', userId),
@@ -67,6 +72,15 @@ export class SupabaseRepo implements Repo {
       this.db.from('workouts').select('*').eq('user_id', userId).order('name'),
       this.db.from('sessions').select('*').eq('user_id', userId).order('started_at', { ascending: false }),
     ]);
+    let results = await read();
+    // Right after a fresh sign-in or a confirmation link, PostgREST can briefly reject the
+    // just-issued JWT ("JWT issued at future", PGRST303) while its clock catches up with the
+    // auth server's. The session is fine, so wait a moment and read again.
+    for (let attempt = 0; attempt < 2 && results.some((r) => clockSkewed(r.error)); attempt++) {
+      await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
+      results = await read();
+    }
+    const [profile, goals, entries, exercises, workouts, sessions] = results;
     const named = { profile, goals, entries, exercises, workouts, sessions };
     for (const [what, r] of Object.entries(named)) fail(r.error, what);
     const u = this.auth.user();
@@ -107,29 +121,62 @@ export class SupabaseRepo implements Repo {
 export class SupabaseAuth implements AuthProvider {
   private db = inject(SUPABASE);
   readonly user = signal<AuthUser | null | undefined>(undefined);
+  readonly linkError = signal<string | null>(null);
 
   constructor() {
+    this.linkError.set(linkErrorFromUrl());
     this.db.auth.getSession().then(({ data }) => this.user.set(toUser(data.session?.user)));
-    this.db.auth.onAuthStateChange((_event, session) => this.user.set(toUser(session?.user)));
+    this.db.auth.onAuthStateChange((_event, session) => {
+      this.user.set(toUser(session?.user));
+      // A failed link is only worth explaining while the user is still signed out.
+      if (session) this.linkError.set(null);
+    });
   }
   async signIn(email: string, password: string) {
     const { error } = await this.db.auth.signInWithPassword({ email, password });
-    if (error) throw new Error(error.message);
+    if (error) throw isEmailUnconfirmed(error) ? new EmailNotConfirmedError() : new Error(error.message);
   }
-  async signUp(email: string, password: string, displayName: string) {
-    const { error } = await this.db.auth.signUp({
+  async signUp(email: string, password: string, displayName: string): Promise<SignUpResult> {
+    const { data, error } = await this.db.auth.signUp({
       email, password,
-      options: { data: { display_name: displayName }, emailRedirectTo: location.origin + '/today' },
+      options: { data: { display_name: displayName }, emailRedirectTo: redirectTo() },
     });
+    if (error) throw new Error(error.message);
+    // With email confirmation on, the account exists but has no session yet.
+    return { confirmationSent: !data.session };
+  }
+  async resendConfirmation(email: string) {
+    const { error } = await this.db.auth.resend({ type: 'signup', email, options: { emailRedirectTo: redirectTo() } });
     if (error) throw new Error(error.message);
   }
   async signInWithGoogle() {
-    const { error } = await this.db.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/today' } });
+    const { error } = await this.db.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: redirectTo() } });
     if (error) throw new Error(error.message);
   }
   async signOut() {
     await this.db.auth.signOut();
   }
+}
+
+function redirectTo(): string {
+  return location.origin + '/today';
+}
+
+/** GoTrue refuses sign-in with this code (or message) until the confirmation link is opened. */
+function isEmailUnconfirmed(error: { code?: string; message: string }): boolean {
+  return error.code === 'email_not_confirmed' || /not confirmed/i.test(error.message);
+}
+
+/**
+ * A confirmation link that was already used (or has expired) lands back here with
+ * `error_code` in the hash instead of tokens. Read it before the client clears it.
+ */
+function linkErrorFromUrl(): string | null {
+  const params = new URLSearchParams(location.hash.replace(/^#/, ''));
+  if (!params.get('error') && !params.get('error_code')) return null;
+  return params.get('error_code') === 'otp_expired'
+    ? 'That link has expired or was already used. Sign in, or send yourself a new one.'
+    : "That sign-in link didn't work. Please try again.";
 }
 
 function toUser(u: { id: string; email?: string; user_metadata?: Record<string, any> } | null | undefined): AuthUser | null {

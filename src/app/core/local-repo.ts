@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import type { AuthProvider, AuthUser } from './auth';
+import type { AuthProvider, AuthUser, SignUpResult } from './auth';
 import { seedSnapshot } from './local-seed';
 import type { Exercise, Goal, GoalEntry, Profile, Session, Snapshot, Workout } from './model';
 import { OfflineError, type Repo } from './repo';
@@ -82,6 +82,7 @@ function upsert<T extends { id: string }>(list: T[], item: T) {
 @Injectable()
 export class LocalAuth implements AuthProvider {
   readonly user = signal<AuthUser | null | undefined>(LocalAuth.stored());
+  readonly linkError = signal<string | null>(null);
 
   static stored(): AuthUser | null {
     try {
@@ -100,10 +101,12 @@ export class LocalAuth implements AuthProvider {
     const name = email.split('@')[0] || 'you';
     this.set({ id: 'local-' + email.toLowerCase(), email, displayName: name[0].toUpperCase() + name.slice(1) });
   }
-  async signUp(email: string, _password: string, displayName: string): Promise<void> {
+  async signUp(email: string, _password: string, displayName: string): Promise<SignUpResult> {
     await new Promise((r) => setTimeout(r, 200));
     this.set({ id: 'local-' + email.toLowerCase(), email, displayName: displayName || email.split('@')[0] });
+    return { confirmationSent: false };
   }
+  async resendConfirmation(): Promise<void> {}
   async signInWithGoogle(): Promise<void> {
     await this.signIn('daniel@example.com');
   }

@@ -67,7 +67,12 @@ class FakeRepo implements Repo {
 
 const auth: AuthProvider = {
   user: signal({ id: UID, email: 'd@example.com', displayName: 'Daniel' }),
-  signIn: async () => {}, signUp: async () => {}, signInWithGoogle: async () => {}, signOut: async () => {},
+  linkError: signal(null),
+  signIn: async () => {},
+  signUp: async () => ({ confirmationSent: false }),
+  resendConfirmation: async () => {},
+  signInWithGoogle: async () => {},
+  signOut: async () => {},
 };
 
 async function storeWith(snapshot: Partial<Snapshot>): Promise<{ store: AppStore; repo: FakeRepo }> {
