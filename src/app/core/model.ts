@@ -156,6 +156,10 @@ export interface Session {
   startedAt: string;
   endedAt: string | null;
   closedBy: SessionClosedBy | null;
+  /** ISO timestamp while the session is paused, null otherwise. */
+  pausedAt: string | null;
+  /** Total seconds spent paused, so elapsed time excludes them. */
+  pausedSeconds: number;
   exercises: SessionExercise[];
 }
 

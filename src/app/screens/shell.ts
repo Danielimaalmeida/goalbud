@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { formatElapsed } from '../core/dates';
+import type { Session } from '../core/model';
+import { sessionElapsedSeconds } from '../core/sessions';
 import { AppStore } from '../core/store';
 import { BottomNav } from '../ui/bottom-nav';
 import { Sheet } from '../ui/sheet';
@@ -24,7 +26,7 @@ import { Sheet } from '../ui/sheet';
       @if (resumable(); as s) {
         <app-sheet (close)="dismissed.set(true)">
           <div class="title">Still going?</div>
-          <div class="sub">{{ s.workoutName }} has been open for {{ elapsed(s.startedAt) }}. Whatever you did already counts.</div>
+          <div class="sub">{{ s.workoutName }} has been open for {{ elapsed(s) }}. Whatever you did already counts.</div>
           <div class="opts">
             <button class="option is-primary" (click)="continueSession(s.id)">
               <div class="grow"><div class="name">Still going</div><div class="meta">Back to the session</div></div><div class="go"></div>
@@ -49,8 +51,8 @@ export class Shell {
     return !this.dismissed() && s && s.date === this.store.today() ? s : null;
   });
 
-  elapsed(iso: string): string {
-    const secs = (Date.now() - new Date(iso).getTime()) / 1000;
+  elapsed(s: Session): string {
+    const secs = sessionElapsedSeconds(s, Date.now());
     return secs < 3600 ? `${Math.max(1, Math.round(secs / 60))} min` : formatElapsed(secs).replace(/:\d\d$/, '') + ' h';
   }
   continueSession(id: string) {
