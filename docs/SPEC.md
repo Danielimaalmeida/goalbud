@@ -131,6 +131,10 @@ A container with a target date ("finish the painting by October").
 - **Per exercise:** list of sessions with actuals. A progress chart (top
   weight or total reps over time) is deferred until there is about a month of
   data, because charts on empty data are demoralising.
+- **Per workout:** its plan, the session count and last-done date, then every
+  session done from it with the actual reps and weights (or durations) per
+  exercise, newest first. Only what was ticked shows. Tapping an exercise in
+  the plan opens that exercise's own history.
 - No global stats page.
 
 ## 6. Reminders
@@ -155,8 +159,9 @@ Four bottom tabs.
 - **Goals:** all goals grouped by state (active, paused), long goals with their
   children, archive access. Create and edit goals here. Tap a goal for its
   calendar history.
-- **Workouts:** workout templates, exercise library, start a session. Tap an
-  exercise for its session history.
+- **Workouts:** workout templates, exercise library, start a session. Tap a
+  workout for its plan and session history; tap an exercise for its session
+  history.
 - **You:** account, reminder time, archive, sign out.
 
 No typing after setup on the Today screen. Setup and editing happen in Goals

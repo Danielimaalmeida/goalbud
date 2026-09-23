@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { CdkDrag, CdkDragHandle, CdkDropList, moveItemInArray, type CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { exerciseMeta } from '../core/exercises';
 import { newId } from '../core/ids';
 import { APP_DEFAULT_REST_SECONDS, type Exercise, type ExerciseKind, type SetTarget, type Workout } from '../core/model';
@@ -23,7 +23,7 @@ interface Draft {
 @Component({
   selector: 'app-workout-editor',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ConfirmDelete, ExercisePicker, CdkDropList, CdkDrag, CdkDragHandle],
+  imports: [ConfirmDelete, ExercisePicker, CdkDropList, CdkDrag, CdkDragHandle, RouterLink],
   template: `
     <div class="screen">
       <header class="form-head">
@@ -103,6 +103,7 @@ interface Draft {
 
         @if (existing(); as w) {
           <div class="ends">
+            <a class="card arch" [routerLink]="['/workouts', w.id]"><span class="row-action grow">Session history</span><span class="aside">reps, weights, past sessions</span><span class="chev">›</span></a>
             <button class="card arch" (click)="archive(w)"><span class="row-action is-quiet grow">Archive workout</span><span class="aside">past sessions are kept</span><span class="chev">›</span></button>
             <button class="card arch" (click)="confirming.set(true)"><span class="row-action is-danger grow">Delete workout</span><span class="aside">gone for good</span><span class="chev">›</span></button>
           </div>

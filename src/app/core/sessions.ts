@@ -102,6 +102,23 @@ export function sessionsForExercise(sessions: Session[], exerciseId: string): Se
     .sort((a, b) => (a.startedAt < b.startedAt ? 1 : -1));
 }
 
+/** Sessions done from this workout (at least one ticked set), newest first. */
+export function sessionsForWorkout(sessions: Session[], workoutId: string): Session[] {
+  return sessions
+    .filter((s) => s.workoutId === workoutId && s.exercises.some((e) => doneSets(e).length > 0))
+    .sort((a, b) => (a.startedAt < b.startedAt ? 1 : -1));
+}
+
+/** Exercises with at least one ticked set in a session. */
+export function touchedExercises(s: Session): SessionExercise[] {
+  return s.exercises.filter((e) => doneSets(e).length > 0);
+}
+
+/** How many sets were actually ticked in a session. */
+export function doneSetCount(s: Session): number {
+  return s.exercises.reduce((n, e) => n + doneSets(e).length, 0);
+}
+
 /** Heaviest ticked set (reps exercises) or longest hold (time exercises). */
 export function bestSet(sessions: Session[], exerciseId: string, kind: ExerciseKind): SessionSet | null {
   let best: SessionSet | null = null;

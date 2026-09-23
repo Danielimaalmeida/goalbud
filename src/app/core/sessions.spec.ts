@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Session, SessionExercise, SessionSet } from './model';
-import { allSetsDone, currentExercise, nextExercise } from './sessions';
+import { allSetsDone, currentExercise, doneSetCount, nextExercise, sessionsForWorkout, touchedExercises } from './sessions';
 
 function set(done: boolean): SessionSet {
   return { target: { reps: 8, weight: null, seconds: null }, reps: null, weight: null, seconds: null, doneAt: done ? '2026-09-18T18:10:00.000Z' : null };
@@ -53,5 +53,43 @@ describe('allSetsDone', () => {
     expect(allSetsDone(s)).toBe(false);
     expect(allSetsDone(s, { i: 1, j: 1 })).toBe(true);
     expect(allSetsDone(s, { i: 0, j: 0 })).toBe(false);
+  });
+});
+
+/** One session from a workout (or freestyle), with a given start time and set states. */
+function from(workoutId: string | null, startedAt: string, ...exercises: string[]): Session {
+  const s = session(...exercises);
+  return { ...s, id: startedAt, workoutId, workoutName: workoutId ? 'Push day' : 'Freestyle', startedAt };
+}
+
+describe('sessionsForWorkout', () => {
+  it('keeps only sessions done from this workout, newest first', () => {
+    const older = from('w1', '2026-09-10T18:00:00.000Z', 'xx');
+    const newer = from('w1', '2026-09-18T18:00:00.000Z', 'xx');
+    const other = from('w2', '2026-09-20T18:00:00.000Z', 'xx');
+    const freestyle = from(null, '2026-09-21T18:00:00.000Z', 'xx');
+    const found = sessionsForWorkout([older, other, newer, freestyle], 'w1');
+    expect(found.map((s) => s.id)).toEqual([newer.id, older.id]);
+  });
+  it('leaves out sessions with nothing ticked', () => {
+    const nothing = from('w1', '2026-09-18T18:00:00.000Z', '..');
+    expect(sessionsForWorkout([nothing], 'w1')).toEqual([]);
+  });
+  it('keeps a session when only some sets were ticked', () => {
+    const partial = from('w1', '2026-09-18T18:00:00.000Z', 'x.', '..');
+    expect(sessionsForWorkout([partial], 'w1').map((s) => s.id)).toEqual([partial.id]);
+  });
+});
+
+describe('touchedExercises and doneSetCount', () => {
+  it('lists only the exercises with a ticked set and counts the sets', () => {
+    const s = from('w1', '2026-09-18T18:00:00.000Z', 'x.', '..', 'xx');
+    expect(touchedExercises(s).map((e) => e.exerciseId)).toEqual(['e0', 'e2']);
+    expect(doneSetCount(s)).toBe(3);
+  });
+  it('is empty with a zero count when nothing was ticked', () => {
+    const s = from('w1', '2026-09-18T18:00:00.000Z', '..', '.');
+    expect(touchedExercises(s)).toEqual([]);
+    expect(doneSetCount(s)).toBe(0);
   });
 });
