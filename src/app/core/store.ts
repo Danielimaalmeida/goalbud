@@ -5,6 +5,7 @@ import { entryFor, exerciseGoalsOn } from './goals';
 import { newId } from './ids';
 import type { Exercise, Goal, GoalEntry, LocalDate, Profile, Session, Workout } from './model';
 import { OfflineError, REPO } from './repo';
+import { resumeSession } from './sessions';
 
 interface Action {
   /** Apply optimistically; return how to undo it. */
@@ -293,7 +294,8 @@ export class AppStore {
     const now = new Date();
     const session: Session = {
       id: newId(), workoutId: workout?.id ?? null, workoutName: workout?.name ?? 'Freestyle', goalId,
-      date: todayLocal(now), startedAt: now.toISOString(), endedAt: null, closedBy: null, exercises,
+      date: todayLocal(now), startedAt: now.toISOString(), endedAt: null, closedBy: null,
+      pausedAt: null, pausedSeconds: 0, exercises,
     };
     await this.saveSession(session);
     return session;
@@ -315,13 +317,14 @@ export class AppStore {
   async finishSession(id: string, closedBy: Session['closedBy'] = 'user', goalId?: string | null): Promise<void> {
     const s = this.session(id);
     if (!s || s.endedAt) return;
-    const endedAt = closedBy === 'midnight' ? new Date(`${s.date}T23:59:59`).toISOString() : new Date().toISOString();
+    const endMs = closedBy === 'midnight' ? new Date(`${s.date}T23:59:59`).getTime() : Date.now();
+    const closed = resumeSession(s, new Date(endMs));
     let linked = goalId === undefined ? s.goalId : goalId;
     if (linked === null && closedBy === 'midnight') {
       const candidates = exerciseGoalsOn(this.goals(), s.date);
       if (candidates.length === 1) linked = candidates[0].id;
     }
-    await this.saveSession({ ...s, endedAt, closedBy, goalId: linked });
+    await this.saveSession({ ...closed, endedAt: new Date(endMs).toISOString(), closedBy, goalId: linked });
     if (linked) await this.tickGoal(linked, s.date);
   }
 

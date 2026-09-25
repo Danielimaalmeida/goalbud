@@ -122,7 +122,7 @@ export function seedSnapshot(userId: string, email: string, displayName: string)
     sessions.push({
       id: `s-${date}`, workoutId: 'wo-push', workoutName: 'Push day', goalId: 'push', date,
       startedAt: at(date, 18, 5), endedAt: midnight ? at(date, 23, 59) : at(date, 18, 52),
-      closedBy: midnight ? 'midnight' : 'user',
+      closedBy: midnight ? 'midnight' : 'user', pausedAt: null, pausedSeconds: 0,
       exercises: [
         sx('bench', 'Bench press', 'reps', 90, [
           s(8, benchWeight), s(8, benchWeight), s(7, benchWeight), s(6, benchWeight + 2.5),

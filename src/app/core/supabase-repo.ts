@@ -47,11 +47,13 @@ const toWorkout = (r: any): Workout => ({ id: r.id, name: r.name, restSeconds: r
 const fromWorkout = (userId: string, w: Workout) => ({ id: w.id, user_id: userId, name: w.name, rest_seconds: w.restSeconds, exercises: w.exercises, archived: w.archived });
 const toSession = (r: any): Session => ({
   id: r.id, workoutId: r.workout_id, workoutName: r.workout_name, goalId: r.goal_id ?? null, date: r.date, startedAt: r.started_at,
-  endedAt: r.ended_at, closedBy: r.closed_by, exercises: r.exercises ?? [],
+  endedAt: r.ended_at, closedBy: r.closed_by, pausedAt: r.paused_at ?? null, pausedSeconds: r.paused_seconds ?? 0,
+  exercises: r.exercises ?? [],
 });
 const fromSession = (userId: string, s: Session) => ({
   id: s.id, user_id: userId, workout_id: s.workoutId, workout_name: s.workoutName, goal_id: s.goalId, date: s.date,
-  started_at: s.startedAt, ended_at: s.endedAt, closed_by: s.closedBy, exercises: s.exercises,
+  started_at: s.startedAt, ended_at: s.endedAt, closed_by: s.closedBy, paused_at: s.pausedAt, paused_seconds: s.pausedSeconds,
+  exercises: s.exercises,
 });
 const toProfile = (r: any, fallback: { email: string; displayName: string }): Profile => ({
   id: r?.id, displayName: r?.display_name ?? fallback.displayName, email: r?.email ?? fallback.email,
