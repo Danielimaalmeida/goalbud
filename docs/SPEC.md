@@ -109,6 +109,14 @@ A container with a target date ("finish the painting by October").
 - Screen shows the planned list. Per set: tick done, edit actual reps/weight
   or duration. Rest timer auto-starts on tick, tap to skip, no sound. Running
   session clock.
+- **Time-based sets count down.** The current set has a start control that runs
+  the target duration down to zero, showing the time left. At zero the set ticks
+  itself and rest starts, like tapping the ring. The countdown can be held and
+  picked back up.
+- **A session can be paused.** Pause freezes the session clock, any set
+  countdown and the rest timer, and locks the screen; Resume carries on exactly
+  where it stopped. Paused time never counts toward the session, in the live
+  clock or afterward.
 - The list is a plan, not an order: any exercise can be tapped and done next
   (a machine may be busy). Finished exercises stay ticked wherever they sit.
 - **Every set saves immediately** to the server.

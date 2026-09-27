@@ -40,6 +40,7 @@ function session(id: string, workoutId: string | null, date: string, sets: Sessi
   return {
     id, workoutId, workoutName: workoutId ? 'Push day' : 'Freestyle', goalId: null, date,
     startedAt: `${date}T18:00:00.000Z`, endedAt: `${date}T18:45:00.000Z`, closedBy: 'user',
+    pausedAt: null, pausedSeconds: 0,
     exercises: [{ exerciseId: 'bench', name: 'Bench press', kind: 'reps', restSeconds: 90, sets }],
   };
 }

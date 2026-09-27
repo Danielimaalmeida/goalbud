@@ -29,6 +29,35 @@ export function emptySet(kind: ExerciseKind, like?: SetTarget): SessionSet {
   return { target, reps: null, weight: null, seconds: null, doneAt: null };
 }
 
+/** True while an open session's clock is paused. */
+export function isSessionPaused(s: Session): boolean {
+  return !!s.pausedAt && s.endedAt === null;
+}
+
+/**
+ * Seconds the session has been running, paused spans left out. Callers pass
+ * the wall clock; a paused session reports the frozen total.
+ */
+export function sessionElapsedSeconds(s: Session, nowMs: number): number {
+  const start = new Date(s.startedAt).getTime();
+  const end = s.endedAt ? new Date(s.endedAt).getTime() : nowMs;
+  const openPause = isSessionPaused(s) ? end - new Date(s.pausedAt!).getTime() : 0;
+  return Math.max(0, (end - start - (s.pausedSeconds ?? 0) * 1000 - openPause) / 1000);
+}
+
+/** Pause the clock. A no-op on a closed or already paused session. */
+export function pauseSession(s: Session, at: Date): Session {
+  if (s.endedAt || s.pausedAt) return s;
+  return { ...s, pausedAt: at.toISOString() };
+}
+
+/** Resume and fold the pause that just ended into `pausedSeconds`. */
+export function resumeSession(s: Session, at: Date): Session {
+  if (!s.pausedAt) return s;
+  const extra = Math.max(0, (at.getTime() - new Date(s.pausedAt).getTime()) / 1000);
+  return { ...s, pausedAt: null, pausedSeconds: Math.round(((s.pausedSeconds ?? 0) + extra) * 10) / 10 };
+}
+
 export function isExerciseDone(ex: SessionExercise): boolean {
   return ex.sets.length > 0 && ex.sets.every((s) => s.doneAt !== null);
 }

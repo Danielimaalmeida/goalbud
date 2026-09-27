@@ -33,6 +33,7 @@ function session(id: string, workoutId: string | null, exerciseIds: string[]): S
   return {
     id, workoutId, workoutName: workoutId ?? 'Freestyle', goalId: null, date: '2026-09-15',
     startedAt: '2026-09-15T18:00:00.000Z', endedAt: '2026-09-15T19:00:00.000Z', closedBy: 'user',
+    pausedAt: null, pausedSeconds: 0,
     exercises: exerciseIds.map((e) => ({
       exerciseId: e, name: e, kind: 'reps' as const, restSeconds: 90,
       sets: [{ target: { reps: 8, weight: null, seconds: null }, reps: 8, weight: 40, seconds: null, doneAt: '2026-09-15T18:10:00.000Z' }],
