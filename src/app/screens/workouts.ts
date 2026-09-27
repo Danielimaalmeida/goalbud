@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { formatShort } from '../core/dates';
 import { exerciseMeta } from '../core/exercises';
 import { pluralise } from '../core/goals';
 import type { Exercise, Workout } from '../core/model';
@@ -25,8 +26,8 @@ import { WorkoutPicker } from './workout-picker';
 
         <div class="eyebrow">Your workouts</div>
         @for (w of store.activeWorkouts(); track w.id) {
-          <a class="card wo" [routerLink]="['/workouts', w.id, 'edit']">
-            <div class="wo-head"><div class="wo-name">{{ w.name }}</div><div class="wo-meta">{{ pluralise(w.exercises.length, 'exercise') }} · {{ pluralise(setCount(w), 'set') }}</div></div>
+          <a class="card wo" [routerLink]="['/workouts', w.id]">
+            <div class="wo-head"><div class="wo-name">{{ w.name }}</div><div class="wo-meta">{{ woMeta(w) }}</div></div>
             <div class="tags">
               @for (n of names(w); track $index) { <span class="tag is-quiet nm">{{ n }}</span> }
               @if (w.exercises.length > 3) { <span class="tag is-quiet">+{{ w.exercises.length - 3 }}</span> }
@@ -84,6 +85,13 @@ export class WorkoutsScreen {
 
   names(w: Workout): string[] {
     return w.exercises.slice(0, 3).map((e) => this.store.exercises().find((x) => x.id === e.exerciseId)?.name ?? '?');
+  }
+  woMeta(w: Workout): string {
+    const sets = `${pluralise(w.exercises.length, 'exercise')} · ${pluralise(setCount(w), 'set')}`;
+    const last = this.store.lastSessionDate(w.id);
+    if (!last) return sets;
+    const when = last === this.store.today() ? 'today' : last === this.store.yesterday() ? 'yesterday' : formatShort(last).slice(0, 3);
+    return `${sets} · last done ${when}`;
   }
   count(e: Exercise): number {
     return sessionsForExercise(this.store.sessions(), e.id).length;

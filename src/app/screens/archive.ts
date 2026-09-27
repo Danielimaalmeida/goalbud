@@ -56,7 +56,7 @@ type Pending =
           <div class="list is-muted">
             @for (w of workouts(); track w.id) {
               <div class="row">
-                <span class="grow"><span class="name is-muted">{{ w.name }}</span><span class="meta is-muted">{{ pluralise(w.exercises.length, 'exercise') }}</span></span>
+                <a class="grow" [routerLink]="['/workouts', w.id]"><span class="name is-muted">{{ w.name }}</span><span class="meta is-muted">{{ pluralise(w.exercises.length, 'exercise') }}</span></a>
                 <button class="btn is-soft-sage" (click)="store.saveWorkout({ ...w, archived: false })">Restore</button>
                 <button class="btn is-soft-danger" (click)="ask({ kind: 'workout', item: w })">Delete</button>
               </div>
