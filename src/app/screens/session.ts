@@ -1,20 +1,28 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { formatElapsed } from '../core/dates';
+import { formatElapsed, formatShort } from '../core/dates';
 import { describeSchedule, exerciseGoalsOn, pluralise } from '../core/goals';
-import type { Exercise, ExerciseKind, Goal, Session, SessionExercise, SessionSet } from '../core/model';
-import { allSetsDone, currentExercise, doneSets, emptySet, formatSet, formatTarget, isExerciseDone, isSessionPaused, nextExercise, nextOpenSet, pauseSession, resumeSession, sessionElapsedSeconds, sessionProgress, snapshotExercise } from '../core/sessions';
+import type { Exercise, ExerciseKind, Goal, LocalDate, Session, SessionExercise, SessionSet } from '../core/model';
+import { allSetsDone, currentExercise, doneSets, emptySet, formatSet, formatTarget, isExerciseDone, isSessionPaused, lastTimeFor, nextExercise, nextOpenSet, pauseSession, resumeSession, sessionElapsedSeconds, sessionProgress, snapshotExercise } from '../core/sessions';
 import { AppStore } from '../core/store';
 import { goalVar } from '../ui/goal-colour';
 import { ExercisePicker } from '../ui/exercise-picker';
 import { Sheet } from '../ui/sheet';
+
+/** Device preference: is "Last time" open on the current exercise? */
+const SHOW_LAST_KEY = 'goalbud.session.lastTime';
+function readShowLast(): boolean {
+  try { return localStorage.getItem(SHOW_LAST_KEY) === 'open'; } catch { return false; }
+}
 
 /**
  * Live session, full-list layout. Every set saves immediately. Rest timer
  * auto-starts on tick, tap to skip, no sound. Time-based sets run a countdown:
  * start it by hand, it ticks itself at zero. Pause stops the clock, the set
  * timer and rest, and locks the screen until resumed. Finish closes as-is.
- * The list is a plan, not an order: tap any exercise to do it now.
+ * The list is a plan, not an order: tap any exercise to do it now. The
+ * current exercise can unfold what was ticked for it last time, so the
+ * weights are never a guess.
  */
 @Component({
   selector: 'app-session',
@@ -50,6 +58,21 @@ import { Sheet } from '../ui/sheet';
             } @else if (i === current() && !s.endedAt) {
               <section class="card exc">
                 <div class="eh"><div class="en big">{{ ex.name }}</div><div class="grow"></div><div class="em">set {{ open(ex) + 1 }} of {{ ex.sets.length }}</div></div>
+                @if (lastTimes()[i]; as l) {
+                  <div class="last" [class.is-open]="showLast()">
+                    <button class="lh" (click)="toggleLast()" [attr.aria-expanded]="showLast()">
+                      <span class="ll">Last time</span><span class="ld">{{ when(l.date) }}</span><span class="lc">›</span>
+                    </button>
+                    @if (showLast()) {
+                      <div class="lsets">
+                        @for (set of l.sets; track $index; let k = $index) {
+                          <span class="tag" [class.is-cur]="k === open(ex)">{{ formatSet(set, l.kind) }}</span>
+                        }
+                      </div>
+                      @if (l.workoutName !== s.workoutName) { <div class="lfrom">In {{ l.workoutName }}</div> }
+                    }
+                  </div>
+                }
                 @for (set of ex.sets; track $index; let j = $index) {
                   <div class="srow" [class.is-cur]="j === open(ex)">
                     <span class="si" [class.is-cur]="j === open(ex)">{{ j + 1 }}</span>
@@ -197,6 +220,16 @@ import { Sheet } from '../ui/sheet';
     .exn:disabled .en { color: var(--ink-3); }
     .exn .chev { font: 700 18px/1 var(--font); color: var(--ink-7); padding: 0 6px; }
     .upnext { font: 700 12px/1 var(--font); color: var(--ink-4); background: var(--fill); border-radius: 999px; padding: 10px 13px; }
+    .last { margin: 8px 0 4px; background: var(--fill); border-radius: 14px; }
+    .lh { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px; }
+    .ll { flex: 1; font: 800 13px/1 var(--font); color: var(--ink-2); }
+    .ld { font: 600 12px/1 var(--font); color: var(--ink-4); }
+    .lc { font: 700 18px/1 var(--font); color: var(--ink-6); width: 12px; text-align: center; transform: rotate(90deg); transition: transform .15s; }
+    .last.is-open .lc { transform: rotate(-90deg); }
+    .lsets { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 12px; }
+    .lsets .tag { background: var(--surface); padding: 9px 10px; }
+    .lsets .tag.is-cur { box-shadow: inset 0 0 0 1.5px var(--ink); }
+    .lfrom { font: 500 12px/1.3 var(--font); color: var(--ink-4); padding: 0 12px 12px; margin-top: -2px; }
     .srow { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line-soft); }
     .srow:last-of-type { border-bottom: 0; }
     .srow.is-cur { padding: 10px 0 8px; }
@@ -273,6 +306,25 @@ export class SessionScreen {
   readonly isDone = isExerciseDone;
   readonly done = doneSets;
   readonly open = nextOpenSet;
+
+  /** Per exercise in the session: what was ticked the last time it was done, or null the first time. */
+  readonly lastTimes = computed(() => {
+    const s = this.session();
+    const all = this.store.sessions();
+    return s ? s.exercises.map((e) => lastTimeFor(all, s, e.exerciseId)) : [];
+  });
+  /** One switch for every exercise: opened once, it stays open as you move on, and next time too. */
+  readonly showLast = signal(readShowLast());
+  toggleLast() {
+    const next = !this.showLast();
+    this.showLast.set(next);
+    try { localStorage.setItem(SHOW_LAST_KEY, next ? 'open' : 'closed'); } catch { /* storage blocked: it just resets next time */ }
+  }
+  when(d: LocalDate): string {
+    if (d === this.store.today()) return 'Today';
+    if (d === this.store.yesterday()) return 'Yesterday';
+    return formatShort(d);
+  }
 
   private readonly now = signal(Date.now());
   /** True while the whole workout is paused: clock, timers and edits are frozen. */

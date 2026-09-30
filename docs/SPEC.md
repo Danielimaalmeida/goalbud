@@ -121,6 +121,12 @@ A container with a target date ("finish the painting by October").
   clock or afterward.
 - The list is a plan, not an order: any exercise can be tapped and done next
   (a machine may be busy). Finished exercises stay ticked wherever they sit.
+- **Last time.** The current exercise has a folded "Last time" row with the
+  day it was last done, from any workout. Unfolded, it lists the sets ticked
+  then and marks the one you are on now, so weights are never a guess. Opened
+  once, it stays open on the next exercises and the next session (a setting on
+  the device). Nothing shows the first time an exercise is done. It shows what
+  was done, never a comparison with today.
 - **Every set saves immediately** to the server.
 - A session is a **snapshot** of actuals; the workout template is not linked
   by reference for its content.
