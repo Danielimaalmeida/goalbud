@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { firstDate } from '../core/calendar';
 import { formatClock, formatLong, partOfDay } from '../core/dates';
 import { countWord, describeSchedule, entryFor, showsOnToday, weeklyCount } from '../core/goals';
 import type { Goal, GoalEntry } from '../core/model';
@@ -22,7 +23,15 @@ interface Item {
   template: `
     <div class="screen">
       <header class="head">
-        <div class="date-line">{{ dateLine() }}</div>
+        <div class="top">
+          <div class="date-line">{{ dateLine() }}</div>
+          @if (hasCalendar()) {
+            <a class="btn is-soft-sage cal" routerLink="/calendar">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="14" height="12.5" rx="3.5" /><path d="M3 8.5h14M7 2.5v3M13 2.5v3" /></svg>
+              Calendar
+            </a>
+          }
+        </div>
         <h1 class="h1-lg">{{ greeting() }}</h1>
         @if (lead(); as l) { <div class="lead">{{ l }}</div> }
       </header>
@@ -107,6 +116,9 @@ interface Item {
   styles: `
     .head { padding: 22px 20px 14px; }
     .head .h1-lg { margin-top: 8px; }
+    .top { display: flex; align-items: center; gap: 12px; }
+    .top .date-line { flex: 1; min-width: 0; }
+    .btn.cal { flex: none; height: 44px; padding: 0 18px 0 15px; font-size: 13px; }
     .tcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
     .tcard.is-skipped { background: var(--surface-muted); border-color: var(--line-muted); }
     .tcard.is-done { background: var(--sage-tint); border-color: var(--sage-tint-2); }
@@ -138,6 +150,8 @@ export class TodayScreen {
   private touched = false;
 
   readonly dateLine = computed(() => formatLong(this.store.today()));
+  /** The calendar needs at least one goal to show. */
+  readonly hasCalendar = computed(() => firstDate(this.store.goals()) !== null);
   readonly greeting = computed(() => `${partOfDay()}, ${this.store.profile()?.displayName.split(' ')[0] ?? 'you'}`);
 
   private readonly items = computed<Item[]>(() => {

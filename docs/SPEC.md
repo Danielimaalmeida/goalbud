@@ -23,7 +23,9 @@ These are hard rules, not tone guidance. Every screen must pass them.
 - No red marks, no "missed", "overdue", "incomplete", or "failed" anywhere.
 - No completion percentages. Show counts of what was done, never what wasn't.
   A weekly goal with 2 of 3 done shows "2 this week".
-- Undone days render as empty, not coloured.
+- Undone days render as empty, not coloured. On the week view a day the
+  schedule planned is an empty ring (the same open ring as on Today), still
+  never a colour.
 - **Skip today:** the user can dismiss a goal for today. Show a kind message
   ("Life happens. You can pick it up later."). A skip does not count toward
   any target. On history it renders as a neutral dash, not a colour.
@@ -136,6 +138,21 @@ A container with a target date ("finish the painting by October").
 
 - **Per goal:** month calendar with filled dots for done days, neutral dash for
   skipped, blank otherwise. Total count of completions.
+- **Week and month:** one view over all goals, opened from the Calendar button
+  on Today. Week is a card per goal with a circle for each day, Monday first.
+  Month is a grid with a dot per goal done each day; picking a day lists that
+  day's goals underneath, with scheduled goals that had nothing planned behind
+  "Other goals". Both go back as far as the first goal, and never past today.
+  A circle is filled when done, a neutral dash when skipped, an empty ring on a
+  day the schedule planned with nothing ticked, a quiet dot on a day with
+  nothing planned, and blank when the goal wasn't active (before it started,
+  paused, archived). A past week keeps the plan and the weekly target it had.
+  A weekly goal shows "2 that week", never what is left.
+- **Filling in the past:** from the week and month views, or the per-goal
+  calendar, any day up to today on which the goal was active can be ticked, and
+  tapped again to clear. A skipped day becomes done. Days still to come are
+  locked and archived goals are read-only. Ticking a workout goal on a past day
+  marks the goal only; it does not invent a session.
 - **Per exercise:** list of sessions with actuals. A progress chart (top
   weight or total reps over time) is deferred until there is about a month of
   data, because charts on empty data are demoralising.
@@ -143,7 +160,8 @@ A container with a target date ("finish the painting by October").
   session done from it with the actual reps and weights (or durations) per
   exercise, newest first. Only what was ticked shows. Tapping an exercise in
   the plan opens that exercise's own history.
-- No global stats page.
+- No global stats page. The week and month views show what was done, never
+  totals, rates or comparisons between weeks.
 
 ## 6. Reminders
 
@@ -163,7 +181,8 @@ Four bottom tabs.
 - **Today:** every due or active goal as a card. Scheduled goals show a done
   toggle. Weekly goals show "N this week" and "+1". Untargeted goals show a
   tap-to-log. Exercise goals open a workout picker on tap. Long-goal children
-  appear like any goal. Skip is available per card.
+  appear like any goal. Skip is available per card. A Calendar button at the top
+  opens the week and month views (§5).
 - **Goals:** all goals grouped by state (active, paused), long goals with their
   children, archive access. Create and edit goals here. Tap a goal for its
   calendar history.
@@ -214,6 +233,8 @@ and Workouts.
 - Offline / local-first sync.
 - Preset exercise library.
 - Circuit or round-based workouts.
+- Logging a past workout session (sets and weights) after the fact. Ticking a
+  past day marks the goal only.
 - Rest timer sounds.
 - Per-goal reminder times.
 - Global stats page.
