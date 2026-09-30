@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Session, SessionExercise, SessionSet } from './model';
-import { allSetsDone, currentExercise, doneSetCount, isSessionPaused, nextExercise, pauseSession, resumeSession, sessionElapsedSeconds, sessionsForWorkout, touchedExercises } from './sessions';
+import { allSetsDone, currentExercise, doneSetCount, isSessionPaused, lastTimeFor, nextExercise, pauseSession, resumeSession, sessionElapsedSeconds, sessionsForWorkout, touchedExercises } from './sessions';
 
 function set(done: boolean): SessionSet {
   return { target: { reps: 8, weight: null, seconds: null }, reps: null, weight: null, seconds: null, doneAt: done ? '2026-09-18T18:10:00.000Z' : null };
@@ -78,6 +78,50 @@ describe('sessionsForWorkout', () => {
   it('keeps a session when only some sets were ticked', () => {
     const partial = from('w1', '2026-09-18T18:00:00.000Z', 'x.', '..');
     expect(sessionsForWorkout([partial], 'w1').map((s) => s.id)).toEqual([partial.id]);
+  });
+});
+
+describe('lastTimeFor', () => {
+  /** A session on a day, with bench sets as "reps×weight", or "." for an open set. */
+  function day(id: string, date: string, workoutName: string, ...sets: string[]): Session {
+    const bench: SessionExercise = {
+      exerciseId: 'bench', name: 'Bench press', kind: 'reps', restSeconds: 90,
+      sets: sets.map((x) => {
+        const [reps, weight] = x === '.' ? [null, null] : x.split('×').map(Number);
+        return { target: { reps: 8, weight: 60, seconds: null }, reps, weight, seconds: null, doneAt: x === '.' ? null : `${date}T18:10:00.000Z` };
+      }),
+    };
+    return { ...session(), id, date, workoutName, startedAt: `${date}T18:00:00.000Z`, exercises: [bench] };
+  }
+
+  it('is what was ticked the most recent time before this session, from any workout', () => {
+    const older = day('a', '2026-09-14', 'Push day', '8×55', '8×55');
+    const recent = day('b', '2026-09-21', 'Upper body', '8×60', '8×60', '7×60', '.');
+    const now = day('c', '2026-09-28', 'Push day', '.', '.');
+    const last = lastTimeFor([recent, now, older], now, 'bench');
+    expect(last?.date).toBe('2026-09-21');
+    expect(last?.workoutName).toBe('Upper body');
+    expect(last?.kind).toBe('reps');
+    expect(last?.sets.map((s) => `${s.reps}×${s.weight}`)).toEqual(['8×60', '8×60', '7×60']);
+  });
+
+  it('skips sessions where nothing was ticked for it', () => {
+    const done = day('a', '2026-09-14', 'Push day', '8×55');
+    const untouched = day('b', '2026-09-21', 'Push day', '.', '.');
+    const now = day('c', '2026-09-28', 'Push day', '.');
+    expect(lastTimeFor([done, untouched, now], now, 'bench')?.date).toBe('2026-09-14');
+  });
+
+  it('never counts this session or a later one', () => {
+    const now = day('b', '2026-09-21', 'Push day', '8×60');
+    const later = day('c', '2026-09-28', 'Push day', '8×65');
+    expect(lastTimeFor([now, later], now, 'bench')).toBeNull();
+  });
+
+  it('is null the first time an exercise is done', () => {
+    const now = day('a', '2026-09-28', 'Push day', '.');
+    expect(lastTimeFor([now], now, 'bench')).toBeNull();
+    expect(lastTimeFor([day('b', '2026-09-21', 'Push day', '8×60'), now], now, 'squat')).toBeNull();
   });
 });
 

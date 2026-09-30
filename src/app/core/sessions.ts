@@ -1,4 +1,4 @@
-import { APP_DEFAULT_REST_SECONDS, type Exercise, type ExerciseKind, type Session, type SessionExercise, type SessionSet, type SetTarget, type Workout } from './model';
+import { APP_DEFAULT_REST_SECONDS, type Exercise, type ExerciseKind, type LocalDate, type Session, type SessionExercise, type SessionSet, type SetTarget, type Workout } from './model';
 
 /** Snapshot a workout template (or nothing, for freestyle) into a new session. */
 export function buildSessionExercises(workout: Workout | null, library: Exercise[]): SessionExercise[] {
@@ -129,6 +129,27 @@ export function sessionsForExercise(sessions: Session[], exerciseId: string): Se
   return sessions
     .filter((s) => s.exercises.some((e) => e.exerciseId === exerciseId && doneSets(e).length > 0))
     .sort((a, b) => (a.startedAt < b.startedAt ? 1 : -1));
+}
+
+/** What was ticked for an exercise the last time it was done, and when. */
+export interface LastTime {
+  date: LocalDate;
+  workoutName: string;
+  /** The kind it had then, so the sets read right even if it changed since. */
+  kind: ExerciseKind;
+  sets: SessionSet[];
+}
+
+/**
+ * The most recent session before `current` with at least one ticked set for
+ * this exercise, from any workout. Null the first time it is done.
+ */
+export function lastTimeFor(sessions: Session[], current: Session, exerciseId: string): LastTime | null {
+  const before = Date.parse(current.startedAt);
+  const prev = sessionsForExercise(sessions, exerciseId).find((s) => s.id !== current.id && Date.parse(s.startedAt) < before);
+  const ex = prev?.exercises.find((e) => e.exerciseId === exerciseId && doneSets(e).length > 0);
+  if (!prev || !ex) return null;
+  return { date: prev.date, workoutName: prev.workoutName, kind: ex.kind, sets: doneSets(ex) };
 }
 
 /** Sessions done from this workout (at least one ticked set), newest first. */
