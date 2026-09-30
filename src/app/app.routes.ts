@@ -41,6 +41,7 @@ export const app_routes: Routes = [
       { path: 'you', loadComponent: () => import('./screens/you').then((m) => m.YouScreen) },
     ],
   },
+  { path: 'calendar', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/calendar').then((m) => m.CalendarScreen) },
   { path: 'goals/new', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/goal-editor').then((m) => m.GoalEditorScreen) },
   { path: 'goals/:id', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/goal-detail').then((m) => m.GoalDetailScreen) },
   { path: 'goals/:id/edit', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/goal-editor').then((m) => m.GoalEditorScreen) },

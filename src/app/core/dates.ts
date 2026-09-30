@@ -43,6 +43,11 @@ export function weekStart(s: LocalDate): LocalDate {
   return addDays(s, 1 - weekday(s));
 }
 
+/** The seven days of the week that starts on `ws`, Monday first. */
+export function weekDays(ws: LocalDate): LocalDate[] {
+  return Array.from({ length: 7 }, (_, i) => addDays(ws, i));
+}
+
 export function monthStart(s: LocalDate): LocalDate {
   return s.slice(0, 8) + '01';
 }
@@ -81,6 +86,14 @@ export function formatLong(s: LocalDate): string {
 export function formatShort(s: LocalDate): string {
   const [, m, d] = s.split('-').map(Number);
   return `${DAY_NAMES[weekday(s) - 1].slice(0, 3)} ${d} ${MONTH_NAMES[m - 1].slice(0, 3)}`;
+}
+
+/** "28 Sep – 4 Oct", or "21 – 27 Sep" when the week stays inside one month. */
+export function formatWeekRange(ws: LocalDate): string {
+  const [, m1, d1] = ws.split('-').map(Number);
+  const [, m2, d2] = addDays(ws, 6).split('-').map(Number);
+  const end = `${d2} ${MONTH_NAMES[m2 - 1].slice(0, 3)}`;
+  return m1 === m2 ? `${d1} – ${end}` : `${d1} ${MONTH_NAMES[m1 - 1].slice(0, 3)} – ${end}`;
 }
 
 /** "4 May" or "4 May 2025" when not this year. */
