@@ -35,6 +35,7 @@ import { WorkoutPicker } from './workout-picker';
           </a>
         }
         <a class="newwo" routerLink="/workouts/new"><span class="plus">+</span>New workout</a>
+        <a class="newwo" routerLink="/import"><span class="plus">↓</span>Import from CSV or JSON</a>
 
         <div class="eyebrow">Exercises · {{ store.activeExercises().length }}<span class="spacer"></span><a class="link" routerLink="/exercises">See all</a></div>
         @if (topExercises().length) {

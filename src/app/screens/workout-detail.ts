@@ -110,6 +110,9 @@ interface PlanRow {
             <a class="row" [routerLink]="['/workouts', w.id, 'edit']">
               <span class="row-action grow">Edit workout</span><span class="aside">plan, exercises, sets</span><span class="chev">›</span>
             </a>
+            <a class="row" routerLink="/export" [queryParams]="{ workout: w.id }">
+              <span class="row-action grow">Export as text</span><span class="aside">for an LLM</span><span class="chev">›</span>
+            </a>
             @if (w.archived) {
               <button class="row" (click)="restore(w)"><span class="row-action grow">Restore</span><span class="aside">back to your workouts</span><span class="chev">›</span></button>
             } @else {

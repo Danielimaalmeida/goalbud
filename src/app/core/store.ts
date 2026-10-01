@@ -2,6 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { AUTH } from './auth';
 import { addDays, msUntilMidnight, todayLocal } from './dates';
 import { entryFor, exerciseGoalsOn } from './goals';
+import type { ImportBuild } from './import';
 import { newId } from './ids';
 import type { Exercise, Goal, GoalEntry, LocalDate, Profile, Session, Workout } from './model';
 import { OfflineError, REPO } from './repo';
@@ -259,6 +260,23 @@ export class AppStore {
   saveWorkout(workout: Workout): Promise<void> {
     const uid = this.userId;
     return this.commit({ apply: () => this.replace(this.workouts, workout), persist: () => this.repo.upsertWorkout(uid, workout) });
+  }
+
+  /**
+   * Save what an import built: exercises first, then workouts. Stops at the
+   * first failed write (the toast says why); running the import again is safe
+   * because exercises are reused and workouts that already exist are skipped.
+   */
+  async importWorkouts(build: ImportBuild): Promise<boolean> {
+    for (const e of build.exercises) {
+      await this.saveExercise(e);
+      if (this.saveError()) return false;
+    }
+    for (const w of build.workouts) {
+      await this.saveWorkout(w);
+      if (this.saveError()) return false;
+    }
+    return true;
   }
 
   /**

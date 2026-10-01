@@ -36,6 +36,8 @@ import { AppStore } from '../core/store';
 
         <div class="list">
           <a class="row" routerLink="/archive"><span class="row-action grow">Archive</span><span class="aside">{{ archiveMeta() }}</span><span class="chev">›</span></a>
+          <a class="row" routerLink="/import"><span class="row-action grow">Import workouts</span><span class="aside">from CSV or JSON</span><span class="chev">›</span></a>
+          <a class="row" routerLink="/export"><span class="row-action grow">Export workouts</span><span class="aside">text for an LLM</span><span class="chev">›</span></a>
           <div class="row"><span class="row-action grow">Week starts</span><span class="aside strong">Monday</span></div>
           <button class="row" (click)="editing.set(!editing())"><span class="row-action grow">Account</span><span class="chev">›</span></button>
           @if (editing()) {
