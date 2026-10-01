@@ -51,6 +51,7 @@ export const app_routes: Routes = [
   { path: 'exercises', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/exercises').then((m) => m.ExercisesScreen) },
   { path: 'exercises/:id', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/exercise-detail').then((m) => m.ExerciseDetailScreen) },
   { path: 'session/:id', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/session').then((m) => m.SessionScreen) },
+  { path: 'export', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/export').then((m) => m.ExportScreen) },
   { path: 'archive', canActivate: [signedIn, dataLoaded], loadComponent: () => import('./screens/archive').then((m) => m.ArchiveScreen) },
   { path: '**', redirectTo: 'today' },
 ];
